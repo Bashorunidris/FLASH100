@@ -1,0 +1,2200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLASH100 - FASA LASU Academic Support Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .split-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .left-section {
+            flex: 1;
+            background: linear-gradient(135deg, #ff8c00 0%, #e67700 100%);
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .branding h1 {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .branding p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            opacity: 0.95;
+        }
+
+        .branding .tagline {
+            font-size: 1em;
+            margin-top: 30px;
+            opacity: 0.85;
+        }
+
+        .right-section {
+            flex: 1;
+            padding: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1a1a2e;
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+            border-bottom: 2px solid rgba(255, 140, 0, 0.2);
+        }
+
+        .tab {
+            padding: 15px 30px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.1em;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .tab.active {
+            color: #ff8c00;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ff8c00;
+        }
+
+        .form-content {
+            display: none;
+        }
+
+        .form-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            color: #fff;
+            font-size: 1em;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #ff8c00;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: #ff8c00;
+            border: none;
+            color: #fff;
+            font-size: 1.05em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: #e67700;
+        }
+
+        .form-footer {
+            margin-top: 25px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+        }
+
+        .message {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-left: 3px solid #ff8c00;
+            background: rgba(255, 140, 0, 0.1);
+            color: #ff8c00;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+            background: #1a1a2e;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            background: #ff8c00;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-header h2 {
+            font-size: 1.8em;
+        }
+
+        .logout-btn {
+            padding: 10px 25px;
+            background: #1a1a2e;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background: #0f0f1a;
+        }
+
+        .dashboard-content {
+            padding: 40px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 140, 0, 0.1);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            padding: 30px;
+        }
+
+        .stat-card h3 {
+            color: #ff8c00;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .stat-card p {
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .users-section {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .users-section h3 {
+            color: #ff8c00;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff8c00 0%, #e67700 100%);
+            border: none;
+            color: #fff;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a2e;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .modal-content {
+            background: #1a1a2e;
+            padding: 0;
+            max-width: 100%;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .modal-header {
+            background: #ff8c00;
+            padding: 25px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: #fff;
+            font-size: 2em;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2.5em;
+            cursor: pointer;
+            padding: 0;
+            width: 50px;
+            height: 50px;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .resource-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 40px;
+            border-bottom: 3px solid rgba(255, 140, 0, 0.2);
+        }
+
+        .resource-tab {
+            flex: 1;
+            padding: 20px 40px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.3em;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .resource-tab.active {
+            color: #ff8c00;
+            background: rgba(255, 140, 0, 0.05);
+        }
+
+        .resource-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #ff8c00;
+        }
+
+        .upload-area {
+            border: 3px dashed rgba(255, 140, 0, 0.5);
+            padding: 60px 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255, 140, 0, 0.02);
+        }
+
+        .upload-area:hover {
+            border-color: #ff8c00;
+            background: rgba(255, 140, 0, 0.08);
+        }
+
+        .upload-area p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .upload-area p:first-child {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #ff8c00;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-info {
+            color: #ff8c00;
+            margin-top: 15px;
+        }
+
+        .notification-form textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            color: #fff;
+            font-size: 1em;
+            min-height: 150px;
+            resize: vertical;
+            margin-bottom: 20px;
+            font-family: inherit;
+        }
+
+        .notification-form textarea:focus {
+            outline: none;
+            border-color: #ff8c00;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 15px;
+            background: #ff8c00;
+            border: none;
+            color: #fff;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .modal-btn:hover {
+            background: #e67700;
+        }
+
+        .uploaded-files {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .uploaded-files h3 {
+            color: #ff8c00;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .file-item {
+            background: rgba(255, 140, 0, 0.05);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 3px solid #ff8c00;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-item strong {
+            color: #ff8c00;
+        }
+
+        .delete-btn {
+            padding: 8px 15px;
+            background: rgba(255, 0, 0, 0.7);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 0, 0, 0.9);
+        }
+
+        .resource-item {
+            background: rgba(255, 140, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ff8c00;
+            transition: all 0.3s;
+        }
+
+        .resource-item:hover {
+            background: rgba(255, 140, 0, 0.1);
+            transform: translateX(5px);
+        }
+
+        .resource-item h4 {
+            color: #ff8c00;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        .resource-item p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .resource-item .category-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: rgba(255, 140, 0, 0.2);
+            color: #ff8c00;
+            font-size: 0.85em;
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+
+        .resource-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .download-btn {
+            padding: 8px 15px;
+            background: #ff8c00;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .download-btn:hover {
+            background: #e67700;
+        }
+
+        @media (max-width: 768px) {
+            .resource-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-actions {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+
+            .modal-header h3 {
+                font-size: 1.5em;
+            }
+
+            .upload-area {
+                padding: 30px 20px;
+            }
+        }
+
+        .user-list {
+            list-style: none;
+        }
+
+        .user-item {
+            background: rgba(255, 140, 0, 0.05);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 3px solid #ff8c00;
+        }
+
+        .user-item strong {
+            color: #ff8c00;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .dashboard-header h2 {
+                font-size: 1.5em;
+            }
+
+            .dashboard-content {
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .users-section {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .left-section {
+                padding: 50px 40px;
+            }
+
+            .right-section {
+                padding: 50px 40px;
+            }
+
+            .branding h1 {
+                font-size: 3em;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .split-container {
+                flex-direction: column;
+            }
+
+            .left-section {
+                padding: 40px 30px;
+                min-height: 40vh;
+            }
+
+            .branding h1 {
+                font-size: 2.5em;
+            }
+
+            .branding p {
+                font-size: 1.1em;
+            }
+
+            .right-section {
+                padding: 40px 30px;
+            }
+
+            .form-wrapper {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .left-section {
+                padding: 30px 20px;
+                min-height: 35vh;
+            }
+
+            .branding h1 {
+                font-size: 2em;
+            }
+
+            .branding p {
+                font-size: 1em;
+            }
+
+            .branding .tagline {
+                font-size: 0.9em;
+            }
+
+            .right-section {
+                padding: 30px 20px;
+            }
+
+            .tabs {
+                gap: 10px;
+            }
+
+            .tab {
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+
+            .form-group input {
+                padding: 12px;
+                font-size: 0.95em;
+            }
+
+            .btn {
+                padding: 14px;
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .left-section {
+                padding: 25px 15px;
+                min-height: 30vh;
+            }
+
+            .branding h1 {
+                font-size: 1.8em;
+            }
+
+            .branding p {
+                font-size: 0.95em;
+            }
+
+            .branding .tagline {
+                font-size: 0.85em;
+                margin-top: 20px;
+            }
+
+            .right-section {
+                padding: 25px 15px;
+            }
+
+            .tabs {
+                gap: 5px;
+                margin-bottom: 30px;
+            }
+
+            .tab {
+                padding: 10px 15px;
+                font-size: 0.95em;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .form-group label {
+                font-size: 0.9em;
+                margin-bottom: 6px;
+            }
+
+            .form-group input {
+                padding: 12px;
+                font-size: 0.9em;
+            }
+
+            .btn {
+                padding: 13px;
+                font-size: 0.95em;
+            }
+
+            .form-footer {
+                font-size: 0.85em;
+                margin-top: 20px;
+            }
+
+            .message {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .branding h1 {
+                font-size: 1.6em;
+            }
+
+            .tab {
+                padding: 10px 12px;
+                font-size: 0.9em;
+            }
+
+            .form-group input {
+                padding: 11px;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .left-section {
+                padding: 80px;
+            }
+
+            .branding h1 {
+                font-size: 4em;
+            }
+
+            .branding p {
+                font-size: 1.3em;
+            }
+
+            .right-section {
+                padding: 80px;
+            }
+
+            .form-wrapper {
+                max-width: 500px;
+            }
+        }
+
+        /* Carousel Animation */
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-300%);
+            }
+        }
+    </style>
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="split-container" id="authSection">
+        <div class="left-section">
+            <div class="branding">
+                <h1>FLASH100</h1>
+                <p>FASA LASU Academic Support Hub</p>
+                <p>Your gateway to academic excellence</p>
+                <p class="tagline">Empowering 100 Level students with resources, support, and community</p>
+            </div>
+        </div>
+
+        <div class="right-section">
+            <div class="form-wrapper">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('login')">Login</button>
+                    <button class="tab" onclick="switchTab('signup')">Sign Up</button>
+                </div>
+
+                <div id="message" class="message"></div>
+
+                <div id="loginForm" class="form-content active">
+                    <form onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label for="loginMatric">Matric Number / Email</label>
+                            <input type="text" id="loginMatric" placeholder="2024/1234567 or email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                        </div>
+
+                        <button type="submit" class="btn">Login</button>
+                    </form>
+
+                    <div class="form-footer">
+                        Don't have an account? Click Sign Up above
+                    </div>
+                </div>
+
+                <div id="signupForm" class="form-content">
+                    <form onsubmit="handleSignup(event)">
+                        <div class="form-group">
+                            <label for="signupMatric">Matric Number</label>
+                            <input type="text" id="signupMatric" placeholder="2024/1234567" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="signupName">Full Name</label>
+                            <input type="text" id="signupName" placeholder="Enter your full name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="signupEmail">Email Address</label>
+                            <input type="email" id="signupEmail" placeholder="yourname@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="signupPassword">Password</label>
+                            <input type="password" id="signupPassword" placeholder="Create a password" required>
+                        </div>
+
+                        <button type="submit" class="btn">Create Account</button>
+                    </form>
+
+                    <div class="form-footer">
+                        Already have an account? Click Login above
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard" id="adminDashboard">
+        <div class="dashboard-header">
+            <h2>Admin Dashboard</h2>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+
+        <div class="dashboard-content">
+            <h3 style="color: #ff8c00; font-size: 1.8em; margin-bottom: 30px;">Welcome, Admin!</h3>
+
+            <div class="admin-actions">
+                <button class="action-btn" onclick="openUploadModal()">📁 Upload a File</button>
+                <button class="action-btn" onclick="openNotificationModal()">📢 General Notification</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Users</h3>
+                    <p id="totalUsers">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Today</h3>
+                    <p id="activeToday">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>New This Week</h3>
+                    <p id="newThisWeek">0</p>
+                </div>
+            </div>
+
+            <div class="uploaded-files">
+                <h3>Uploaded Files</h3>
+                <div id="filesList">
+                    <p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No files uploaded yet</p>
+                </div>
+            </div>
+
+            <div class="users-section">
+                <h3>Registered Users</h3>
+                <ul class="user-list" id="userList">
+                    <li style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No users registered yet</li>
+                </ul>
+            </div>
+
+            <div class="users-section" style="margin-top: 30px;">
+                <h3>💬 Send Personal Message to Student</h3>
+                <div style="margin-bottom: 20px;">
+                    <label style="color: rgba(255, 255, 255, 0.8); display: block; margin-bottom: 10px;">Select Student:</label>
+                    <select id="studentSelector" style="width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em; margin-bottom: 15px;">
+                        <option value="">-- Select a student --</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="color: rgba(255, 255, 255, 0.8); display: block; margin-bottom: 10px;">Message:</label>
+                    <textarea id="adminMessage" placeholder="Type your personal message..." style="width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em; min-height: 100px; margin-bottom: 15px;"></textarea>
+                </div>
+                <button onclick="sendPersonalMessage()" style="padding: 12px 30px; background: #ff8c00; color: #fff; border: none; cursor: pointer; font-weight: 600; border-radius: 4px; font-size: 1em;">Send Message</button>
+            </div>
+
+            <div class="users-section" style="margin-top: 30px;">
+                <h3>📋 Student Feedback</h3>
+                <div id="feedbackList">
+                    <p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">Loading feedback...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard" id="studentDashboard">
+        <div class="dashboard-header">
+            <h2>📚 FLASH100 - Student Dashboard</h2>
+            <button class="logout-btn" onclick="logoutStudent()">Logout</button>
+        </div>
+
+        <div class="dashboard-content">
+            <h3 style="color: #ff8c00; font-size: 1.8em; margin-bottom: 10px;">Welcome, <span id="studentName"></span>!</h3>
+            <p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 30px;">Matric: <span id="studentMatric"></span></p>
+
+            <!-- Ads Banner Carousel -->
+            <div style="position: relative; overflow: hidden; border-radius: 8px; margin-bottom: 30px;">
+                <div style="display: flex; animation: scroll 15s infinite linear; gap: 20px;">
+                    <div style="min-width: 100%; background: linear-gradient(135deg, #ff8c00 0%, #e67700 100%); padding: 40px; text-align: center; border-radius: 8px;">
+                        <h2 style="color: #fff; margin-bottom: 10px;">📚 Study Materials Available</h2>
+                        <p style="color: rgba(255, 255, 255, 0.9);">Access thousands of lecture notes, past questions, and study guides</p>
+                    </div>
+                    <div style="min-width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center; border-radius: 8px;">
+                        <h2 style="color: #fff; margin-bottom: 10px;">🎓 Improve Your Grades</h2>
+                        <p style="color: rgba(255, 255, 255, 0.9);">Get access to comprehensive course materials and resources</p>
+                    </div>
+                    <div style="min-width: 100%; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 40px; text-align: center; border-radius: 8px;">
+                        <h2 style="color: #fff; margin-bottom: 10px;">✨ Excel in Your Courses</h2>
+                        <p style="color: rgba(255, 255, 255, 0.9);">Download resources uploaded by your admin and instructors</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: rgba(255, 140, 0, 0.05); padding: 30px; margin-bottom: 30px;">
+                <h3 style="color: #ff8c00; margin-bottom: 20px; font-size: 1.5em;">📖 Available Courses & Resources</h3>
+                
+                <!-- Department Filter Tabs -->
+                <div style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; border-bottom: 2px solid rgba(255, 140, 0, 0.2); padding-bottom: 15px; overflow-x: auto;">
+                    <button class="dept-tab active" onclick="filterByDepartment('')" style="padding: 10px 20px; background: #ff8c00; border: none; color: #1a1a2e; cursor: pointer; font-weight: 600; border-radius: 4px; white-space: nowrap;">All</button>
+                    <button class="dept-tab" onclick="filterByDepartment('history')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">HIS</button>
+                    <button class="dept-tab" onclick="filterByDepartment('iss')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">ISS</button>
+                    <button class="dept-tab" onclick="filterByDepartment('french')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">French</button>
+                    <button class="dept-tab" onclick="filterByDepartment('portuguese')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Portuguese</button>
+                    <button class="dept-tab" onclick="filterByDepartment('linguistics')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Linguistics</button>
+                    <button class="dept-tab" onclick="filterByDepartment('philosophy')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Philosophy</button>
+                    <button class="dept-tab" onclick="filterByDepartment('theatre-art')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Theatre Art</button>
+                    <button class="dept-tab" onclick="filterByDepartment('gns')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">GNS</button>
+                    <button class="dept-tab" onclick="filterByDepartment('english')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">English</button>
+                    <button class="dept-tab" onclick="filterByDepartment('peace-studies')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Peace & Religious Studies</button>
+                </div>
+
+                <div id="studentCoursesList" style="display: grid; gap: 15px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+                    <p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">Loading courses...</p>
+                </div>
+            </div>
+
+            <!-- Notifications Section -->
+            <div style="background: rgba(255, 140, 0, 0.05); padding: 30px; border-left: 4px solid #ff8c00; margin-bottom: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="color: #ff8c00; font-size: 1.5em; margin: 0;">📢 General Announcements</h3>
+                    <button onclick="openFeedbackModal()" style="padding: 10px 20px; background: #ff8c00; color: #1a1a2e; border: none; cursor: pointer; font-weight: 600; border-radius: 4px;">💬 Send Feedback</button>
+                </div>
+                <div id="studentNotifications" style="display: grid; gap: 15px;">
+                    <p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">Loading announcements...</p>
+                </div>
+            </div>
+
+            <!-- Personal Messages Section -->
+            <div style="background: rgba(255, 140, 0, 0.05); padding: 30px; border-left: 4px solid #ff8c00;">
+                <h3 style="color: #ff8c00; margin-bottom: 20px; font-size: 1.5em;">💌 Personal Messages</h3>
+                <div id="studentMessages" style="display: grid; gap: 15px;">
+                    <p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No personal messages yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Department Resources Modal -->
+    <div class="modal" id="departmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="deptModalTitle">📚 Department Resources</h3>
+                <button class="close-btn" onclick="closeDepartmentModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Resource Tabs -->
+                <div class="resource-tabs">
+                    <button class="resource-tab active" onclick="switchResourceType('past-questions')">📝 Past Questions</button>
+                    <button class="resource-tab" onclick="switchResourceType('other')">📖 Departmental Resources</button>
+                </div>
+
+                <!-- Past Questions Tab -->
+                <div id="pastQuestionsTab" class="form-content active">
+                    <div id="pastQuestionsList" style="display: grid; gap: 20px;">
+                        <p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">Loading past questions...</p>
+                    </div>
+                </div>
+
+                <!-- Other Resources Tab -->
+                <div id="otherResourcesTab" class="form-content">
+                    <div id="otherResourcesList" style="display: grid; gap: 20px;">
+                        <p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">Loading resources...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal" id="feedbackModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💬 Send Feedback</h3>
+                <button class="close-btn" onclick="closeFeedbackModal()">&times;</button>
+            </div>
+            <form class="notification-form" onsubmit="submitFeedback(event)">
+                <div class="form-group">
+                    <label>Feedback Subject</label>
+                    <input type="text" id="feedbackSubject" placeholder="What is your feedback about?" required style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em;">
+                </div>
+                <div class="form-group">
+                    <label>Feedback Message</label>
+                    <textarea id="feedbackMessage" placeholder="Share your feedback, suggestions, or concerns..." required style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em; min-height: 150px;"></textarea>
+                </div>
+                <button type="submit" class="modal-btn">Submit Feedback</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📚 Resource Page</h3>
+                <button class="close-btn" onclick="closeUploadModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="resource-tabs">
+                    <button class="resource-tab active" onclick="switchResourceTab('upload')">Upload</button>
+                    <button class="resource-tab" onclick="switchResourceTab('resources')">Resources</button>
+                </div>
+
+                <div id="uploadTab" class="form-content active">
+                    <div class="form-group">
+                        <label>Select Department</label>
+                        <select id="fileDepartment" style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em;">
+                            <option value="">-- Select Department --</option>
+                            <option value="history">HIS - History and International Studies</option>
+                            <option value="iss">ISS - International Studies</option>
+                            <option value="french">French</option>
+                            <option value="portuguese">Portuguese</option>
+                            <option value="linguistics">Linguistics</option>
+                            <option value="philosophy">Philosophy</option>
+                            <option value="theatre-art">Theatre Art</option>
+                            <option value="gns">GNS</option>
+                            <option value="english">English</option>
+                            <option value="peace-studies">Peace and Religious Studies</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Course Name</label>
+                        <input type="text" id="fileTitle" placeholder="Enter course name" style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em;">
+                    </div>
+                    <div class="form-group">
+                        <label>Course Description</label>
+                        <textarea id="fileDescription" placeholder="Enter course description" style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em; min-height: 100px; resize: vertical;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Form Type</label>
+                        <select id="fileCategory" style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em;">
+                            <option value="">-- Select Form Type --</option>
+                            <option value="past-questions">Past Questions</option>
+                            <option value="lecture-notes">Lecture Notes</option>
+                            <option value="textbooks">Textbooks</option>
+                            <option value="assignments">Assignments</option>
+                            <option value="tutorials">Tutorials</option>
+                            <option value="others">Others</option>
+                        </select>
+                    </div>
+                    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                        <p>📁 Click to select file or drag and drop</p>
+                        <p style="font-size: 0.9em;">PDF, DOC, PPT, XLS, Images, Videos supported</p>
+                        <input type="file" id="fileInput" class="file-input" onchange="handleFileSelect(event)">
+                        <div id="fileInfo" class="file-info"></div>
+                    </div>
+                    <button class="modal-btn" onclick="uploadFile()">Post</button>
+                </div>
+
+                <div id="resourcesTab" class="form-content">
+                    <div id="resourcesList">
+                        <p style="color: rgba(255, 255, 255, 0.5); padding: 40px; text-align: center; font-size: 1.2em;">No resources uploaded yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="notificationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Send Notification</h3>
+                <button class="close-btn" onclick="closeNotificationModal()">&times;</button>
+            </div>
+            <form class="notification-form" onsubmit="sendNotification(event)">
+                <div class="form-group">
+                    <label>Notification Title</label>
+                    <input type="text" id="notificationTitle" placeholder="Enter notification title" required>
+                </div>
+                <div class="form-group">
+                    <label>Notification Message</label>
+                    <textarea id="notificationMessage" placeholder="Enter your message here..." required></textarea>
+                </div>
+                <button type="submit" class="modal-btn">Send to All Users</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ====== Cloudinary Config ======
+        const CLOUDINARY_CLOUD_NAME = 'dzhdgxjhl';
+        const CLOUDINARY_UPLOAD_PRESET = 'posepreset';
+        const CLOUDINARY_API_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+
+        // ====== Firebase Config ======
+        const firebaseConfig = {
+            apiKey: "AIzaSyDRedGhjpZA8cjd-aa-F4GEcwx9Y5Z3fjw",
+            authDomain: "uniuse.firebaseapp.com",
+            projectId: "uniuse",
+            storageBucket: "uniuse.firebasestorage.app",
+            messagingSenderId: "132594569463",
+            appId: "1:132594569463:web:b5e03aa73910f371c7c3f2",
+            measurementId: "G-9QTP9ZXN1M"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        const ADMIN_EMAIL = 'toluwanioloyede27@gmail.com';
+        const ADMIN_PASSWORD = '1234ABCD';
+
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.tab');
+            const forms = document.querySelectorAll('.form-content');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('signupForm').classList.add('active');
+            }
+
+            hideMessage();
+        }
+
+        function showMessage(text, type = 'success') {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.classList.add('show');
+            
+            setTimeout(() => {
+                hideMessage();
+            }, 4000);
+        }
+
+        function hideMessage() {
+            const msg = document.getElementById('message');
+            msg.classList.remove('show');
+        }
+
+        function handleSignup(e) {
+            e.preventDefault();
+            
+            const matric = document.getElementById('signupMatric').value;
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            // Validate inputs
+            if (!matric || !name || !email || !password) {
+                showMessage('Please fill in all fields', 'error');
+                return;
+            }
+
+            // Check if matric already exists
+            db.collection('students').where('matric', '==', matric).get().then(snapshot => {
+                if (!snapshot.empty) {
+                    showMessage('This matric number is already registered!', 'error');
+                    return;
+                }
+
+                // Create user with Firebase Auth
+                auth.createUserWithEmailAndPassword(email, password).then(userCredential => {
+                    const firebaseUser = userCredential.user;
+
+                    // Save additional user data to Firestore
+                    db.collection('students').doc(firebaseUser.uid).set({
+                        uid: firebaseUser.uid,
+                        matric: matric,
+                        name: name,
+                        email: email,
+                        registeredDate: firebase.firestore.FieldValue.serverTimestamp()
+                    }).then(() => {
+                        showMessage('Account created successfully! You can now login.');
+                        
+                        setTimeout(() => {
+                            switchTab('login');
+                            document.getElementById('loginMatric').value = matric;
+                            e.target.reset();
+                            auth.signOut(); // Sign out after signup
+                        }, 1500);
+                    }).catch(error => {
+                        console.error('Firestore error:', error);
+                        showMessage('Error saving user data: ' + error.message, 'error');
+                    });
+                }).catch(error => {
+                    console.error('Auth error:', error);
+                    if (error.code === 'auth/email-already-in-use') {
+                        showMessage('This email is already registered!', 'error');
+                    } else if (error.code === 'auth/weak-password') {
+                        showMessage('Password should be at least 6 characters!', 'error');
+                    } else {
+                        showMessage('Signup error: ' + error.message, 'error');
+                    }
+                });
+            }).catch(error => {
+                console.error('Error checking matric:', error);
+                showMessage('Error during signup: ' + error.message, 'error');
+            });
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const identifier = document.getElementById('loginMatric').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Validate inputs
+            if (!identifier || !password) {
+                showMessage('Please fill in all fields', 'error');
+                return;
+            }
+
+            // Check for admin login
+            if (identifier === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                showMessage('Admin login successful!', 'success');
+                
+                setTimeout(() => {
+                    showAdminDashboard();
+                    e.target.reset();
+                }, 1000);
+                return;
+            }
+
+            // Student login with Firebase
+            // First, find student by matric to get their email
+            try {
+                db.collection('students').where('matric', '==', identifier).get().then(snapshot => {
+                    if (snapshot.empty) {
+                        showMessage('Matric number not found. Please sign up first.', 'error');
+                        console.log('No student found with matric:', identifier);
+                        return;
+                    }
+
+                    const studentDoc = snapshot.docs[0];
+                    const studentData = studentDoc.data();
+                    const email = studentData.email;
+                    const matric = studentData.matric;
+
+                    console.log('Student found:', studentData.name, 'Email:', email);
+
+                    // Sign in with Firebase Auth using email and password
+                    auth.signInWithEmailAndPassword(email, password).then(userCredential => {
+                        console.log('Login successful');
+                        showMessage(`Welcome back, ${studentData.name}!`, 'success');
+                        
+                        setTimeout(() => {
+                            showStudentDashboard(studentData, matric);
+                            e.target.reset();
+                        }, 1500);
+                    }).catch(error => {
+                        console.error('Firebase Auth error:', error.code, error.message);
+                        if (error.code === 'auth/wrong-password') {
+                            showMessage('Incorrect password. Please try again.', 'error');
+                        } else if (error.code === 'auth/user-not-found') {
+                            showMessage('Email not found. Please sign up first.', 'error');
+                        } else if (error.code === 'auth/invalid-email') {
+                            showMessage('Invalid email format.', 'error');
+                        } else {
+                            showMessage('Login error: ' + error.message, 'error');
+                        }
+                    });
+                }).catch(error => {
+                    console.error('Firestore error finding student:', error.code, error.message);
+                    showMessage('Error during login: ' + error.message, 'error');
+                });
+            } catch (error) {
+                console.error('Try-catch error:', error);
+                showMessage('Unexpected error: ' + error.message, 'error');
+            }
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('adminDashboard').classList.add('active');
+            updateDashboardStats();
+            updateFilesList();
+        }
+
+        function logout() {
+            document.getElementById('authSection').style.display = 'flex';
+            document.getElementById('adminDashboard').classList.remove('active');
+        }
+
+        function logoutStudent() {
+            document.getElementById('authSection').style.display = 'flex';
+            document.getElementById('studentDashboard').classList.remove('active');
+        }
+
+        function showStudentDashboard(user, matric) {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('studentDashboard').classList.add('active');
+            document.getElementById('studentName').textContent = user.name;
+            document.getElementById('studentMatric').textContent = matric;
+            
+            // Store student data for feedback and messaging
+            currentStudentData = { ...user, matric: matric };
+            
+            loadStudentCourses();
+            loadStudentNotifications();
+            loadStudentMessages();
+        }
+
+        function loadStudentCourses() {
+            const coursesList = document.getElementById('studentCoursesList');
+            coursesList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">Loading courses...</p>';
+            
+            // Get all courses without orderBy to avoid index requirement
+            db.collection('courses').get().then(snapshot => {
+                if (snapshot.empty) {
+                    coursesList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No courses available yet</p>';
+                    console.log('Courses collection is empty');
+                } else {
+                    console.log('Found ' + snapshot.size + ' courses');
+                    
+                    // Sort in JavaScript instead
+                    const courses = [];
+                    snapshot.forEach(doc => {
+                        courses.push({ id: doc.id, data: doc.data() });
+                    });
+                    
+                    // Sort by uploadedDate, newest first
+                    courses.sort((a, b) => {
+                        const dateA = a.data.uploadedDate ? a.data.uploadedDate.toDate() : new Date(0);
+                        const dateB = b.data.uploadedDate ? b.data.uploadedDate.toDate() : new Date(0);
+                        return dateB - dateA;
+                    });
+
+                    coursesList.innerHTML = '';
+                    courses.forEach(doc => {
+                        const course = doc.data;
+                        const uploadedDate = course.uploadedDate ? new Date(course.uploadedDate.toDate()).toLocaleString() : 'N/A';
+                        const courseCard = document.createElement('div');
+                        courseCard.style.cssText = 'background: rgba(255, 140, 0, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); padding: 20px; border-left: 4px solid #ff8c00;';
+                        courseCard.innerHTML = `
+                            <h4 style="color: #ff8c00; margin-bottom: 10px; font-size: 1.2em;">${course.title}</h4>
+                            <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 8px;"><strong>Department:</strong> ${course.department}</p>
+                            <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 8px;"><strong>Type:</strong> ${course.category.replace('-', ' ').toUpperCase()}</p>
+                            <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 10px;">${course.description}</p>
+                            <p style="font-size: 0.85em; color: rgba(255, 255, 255, 0.5); margin-bottom: 15px;">
+                                <strong>File:</strong> ${course.name} | <strong>Size:</strong> ${course.size}<br>
+                                <strong>Posted:</strong> ${uploadedDate}
+                            </p>
+                            ${course.cloudinaryUrl ? `<button onclick="downloadWithWatermark('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download Resource</button>` : ''}
+                        `;
+                        coursesList.appendChild(courseCard);
+                    });
+                }
+            }).catch(error => {
+                console.error('Error loading courses:', error);
+                coursesList.innerHTML = '<p style="color: #ff6666; padding: 20px;">Error loading courses: ' + error.message + '</p>';
+            });
+        }
+
+        let currentStudentData = {};
+
+        function loadStudentNotifications() {
+            const notificationsList = document.getElementById('studentNotifications');
+            notificationsList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">Loading announcements...</p>';
+            
+            // Get all notifications from Firestore
+            db.collection('notifications').get().then(snapshot => {
+                if (snapshot.empty) {
+                    notificationsList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No announcements at the moment</p>';
+                    console.log('No notifications');
+                } else {
+                    console.log('Found ' + snapshot.size + ' notifications');
+                    
+                    // Sort notifications by date, newest first
+                    const notifications = [];
+                    snapshot.forEach(doc => {
+                        notifications.push({ id: doc.id, data: doc.data() });
+                    });
+                    
+                    notifications.sort((a, b) => {
+                        const dateA = a.data.sentDate ? a.data.sentDate.toDate() : new Date(0);
+                        const dateB = b.data.sentDate ? b.data.sentDate.toDate() : new Date(0);
+                        return dateB - dateA;
+                    });
+
+                    notificationsList.innerHTML = '';
+                    notifications.forEach(notif => {
+                        const notification = notif.data;
+                        const sentDate = notification.sentDate ? new Date(notification.sentDate.toDate()).toLocaleString() : 'N/A';
+                        const notifCard = document.createElement('div');
+                        notifCard.style.cssText = 'background: rgba(255, 140, 0, 0.08); border: 1px solid rgba(255, 140, 0, 0.3); padding: 20px; border-left: 4px solid #ff8c00; border-radius: 4px;';
+                        notifCard.innerHTML = `
+                            <h4 style="color: #ff8c00; margin-bottom: 10px; font-size: 1.1em;">${notification.title}</h4>
+                            <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 10px; line-height: 1.6;">${notification.message}</p>
+                            <p style="font-size: 0.85em; color: rgba(255, 255, 255, 0.5);">Announced: ${sentDate}</p>
+                        `;
+                        notificationsList.appendChild(notifCard);
+                    });
+                }
+            }).catch(error => {
+                console.error('Error loading notifications:', error);
+                notificationsList.innerHTML = '<p style="color: #ff6666; padding: 20px;">Error loading announcements</p>';
+            });
+        }
+
+        function filterByDepartment(department) {
+            const coursesList = document.getElementById('studentCoursesList');
+            
+            // Update active tab styling
+            document.querySelectorAll('.dept-tab').forEach(tab => {
+                tab.style.background = 'rgba(255, 140, 0, 0.2)';
+                tab.style.border = '1px solid rgba(255, 140, 0, 0.5)';
+                tab.style.color = '#fff';
+            });
+            
+            // Find and highlight the clicked button
+            event.target.style.background = '#ff8c00';
+            event.target.style.border = 'none';
+            event.target.style.color = '#1a1a2e';
+            
+            // Build query based on department
+            let query = db.collection('courses');
+            
+            if (department) {
+                query = query.where('department', '==', department);
+            }
+            
+            // Don't use orderBy with where to avoid needing composite index
+            query.get().then(snapshot => {
+                if (snapshot.empty) {
+                    coursesList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No courses found for this department</p>';
+                } else {
+                    // Sort in JavaScript instead of Firestore
+                    const courses = [];
+                    snapshot.forEach(doc => {
+                        courses.push({ id: doc.id, data: doc.data() });
+                    });
+                    courses.sort((a, b) => {
+                        const dateA = a.data.uploadedDate ? a.data.uploadedDate.toDate() : new Date(0);
+                        const dateB = b.data.uploadedDate ? b.data.uploadedDate.toDate() : new Date(0);
+                        return dateB - dateA; // Newest first
+                    });
+
+                    coursesList.innerHTML = '';
+                    
+                    // Take only first 3 courses for preview
+                    const previewCourses = courses.slice(0, 3);
+                    previewCourses.forEach(doc => {
+                        const course = doc.data;
+                        const uploadedDate = course.uploadedDate ? new Date(course.uploadedDate.toDate()).toLocaleString() : 'N/A';
+                        const courseCard = document.createElement('div');
+                        courseCard.style.cssText = 'background: rgba(255, 140, 0, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); padding: 20px; border-left: 4px solid #ff8c00; border-radius: 4px;';
+                        courseCard.innerHTML = `
+                            <h4 style="color: #ff8c00; margin-bottom: 10px; font-size: 1.2em;">${course.title}</h4>
+                            <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 8px;"><strong>Department:</strong> ${course.department}</p>
+                            <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 8px;"><strong>Type:</strong> ${course.category.replace('-', ' ').toUpperCase()}</p>
+                            <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 10px;">${course.description}</p>
+                            <p style="font-size: 0.85em; color: rgba(255, 255, 255, 0.5); margin-bottom: 15px;">
+                                <strong>File:</strong> ${course.name} | <strong>Size:</strong> ${course.size}<br>
+                                <strong>Posted:</strong> ${uploadedDate}
+                            </p>
+                            ${course.cloudinaryUrl ? `<button onclick="downloadWithWatermark('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; margin-right: 10px;">⬇️ Download</button>` : ''}
+                        `;
+                        coursesList.appendChild(courseCard);
+                    });
+                    
+                    // Add "View More" button if there are more courses
+                    if (courses.length > 3) {
+                        const viewMoreBtn = document.createElement('div');
+                        viewMoreBtn.style.cssText = 'grid-column: 1 / -1; text-align: center; padding: 20px;';
+                        viewMoreBtn.innerHTML = `<button onclick="openDepartmentModal('${department}')" style="padding: 15px 40px; background: #ff8c00; color: #fff; border: none; cursor: pointer; font-weight: 600; border-radius: 4px; font-size: 1em;">📂 View All ${courses.length} Resources</button>`;
+                        coursesList.appendChild(viewMoreBtn);
+                    }
+                }
+            }).catch(error => {
+                console.error('Error filtering courses:', error);
+                coursesList.innerHTML = '<p style="color: #ff6666; padding: 20px;">Error loading courses</p>';
+            });
+        }
+
+
+
+        function updateDashboardStats() {
+            // Load student count from Firestore
+            db.collection('students').get().then(snapshot => {
+                const userCount = snapshot.size;
+                document.getElementById('totalUsers').textContent = userCount;
+                document.getElementById('activeToday').textContent = userCount;
+                document.getElementById('newThisWeek').textContent = userCount;
+
+                const userList = document.getElementById('userList');
+                
+                if (userCount === 0) {
+                    userList.innerHTML = '<li style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No users registered yet</li>';
+                } else {
+                    userList.innerHTML = '';
+                    snapshot.forEach(doc => {
+                        const user = doc.data();
+                        const li = document.createElement('li');
+                        li.className = 'user-item';
+                        const regDate = user.registeredDate ? new Date(user.registeredDate.toDate()).toLocaleDateString() : 'N/A';
+                        li.innerHTML = `
+                            <strong>${user.name}</strong><br>
+                            Matric: ${user.matric} | Email: ${user.email}<br>
+                            <small>Registered: ${regDate}</small>
+                        `;
+                        userList.appendChild(li);
+                    });
+                }
+                
+                // Also populate the student selector for messaging
+                const selector = document.getElementById('studentSelector');
+                selector.innerHTML = '<option value="">-- Select a student --</option>';
+                snapshot.forEach(doc => {
+                    const user = doc.data();
+                    const option = document.createElement('option');
+                    option.value = user.matric;
+                    option.textContent = `${user.name} (${user.matric})`;
+                    selector.appendChild(option);
+                });
+                
+                // Load feedback
+                loadAdminFeedback();
+            }).catch(error => {
+                console.error('Error loading dashboard stats:', error);
+                document.getElementById('userList').innerHTML = '<li style="color: #ff6666; padding: 20px;">Error loading users</li>';
+            });
+        }
+
+        function sendPersonalMessage() {
+            const selectedMatric = document.getElementById('studentSelector').value;
+            const message = document.getElementById('adminMessage').value;
+
+            if (!selectedMatric) {
+                alert('Please select a student');
+                return;
+            }
+
+            if (!message) {
+                alert('Please enter a message');
+                return;
+            }
+
+            // Save message to Firestore
+            db.collection('messages').add({
+                recipientMatric: selectedMatric,
+                message: message,
+                sentDate: firebase.firestore.FieldValue.serverTimestamp(),
+                fromAdmin: true
+            }).then(docRef => {
+                console.log('Message sent:', docRef.id);
+                alert('Message sent successfully!');
+                document.getElementById('adminMessage').value = '';
+                document.getElementById('studentSelector').value = '';
+            }).catch(error => {
+                console.error('Error sending message:', error);
+                alert('Error sending message: ' + error.message);
+            });
+        }
+
+        function loadAdminFeedback() {
+            const feedbackList = document.getElementById('feedbackList');
+            feedbackList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">Loading feedback...</p>';
+
+            db.collection('feedback').orderBy('submittedDate', 'desc').get().then(snapshot => {
+                if (snapshot.empty) {
+                    feedbackList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No feedback received yet</p>';
+                } else {
+                    feedbackList.innerHTML = '';
+                    snapshot.forEach(doc => {
+                        const feedback = doc.data();
+                        const submittedDate = feedback.submittedDate ? new Date(feedback.submittedDate.toDate()).toLocaleString() : 'N/A';
+                        const feedbackCard = document.createElement('div');
+                        feedbackCard.style.cssText = 'background: rgba(255, 140, 0, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); padding: 15px; margin-bottom: 10px; border-left: 3px solid #ff8c00;';
+                        feedbackCard.innerHTML = `
+                            <strong style="color: #ff8c00;">${feedback.subject}</strong><br>
+                            <small style="color: rgba(255, 255, 255, 0.6);">From: ${feedback.studentName} (${feedback.studentMatric})</small><br>
+                            <small style="color: rgba(255, 255, 255, 0.5);">Email: ${feedback.studentEmail}</small><br>
+                            <p style="color: rgba(255, 255, 255, 0.8); margin: 10px 0;">${feedback.message}</p>
+                            <small style="color: rgba(255, 255, 255, 0.4);">Submitted: ${submittedDate}</small>
+                        `;
+                        feedbackList.appendChild(feedbackCard);
+                    });
+                }
+            }).catch(error => {
+                console.error('Error loading feedback:', error);
+                feedbackList.innerHTML = '<p style="color: #ff6666; padding: 20px;">Error loading feedback</p>';
+            });
+        }
+
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.add('active');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.remove('active');
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileInfo').textContent = '';
+            document.getElementById('fileTitle').value = '';
+            document.getElementById('fileDescription').value = '';
+            document.getElementById('fileCategory').value = 'lecture-notes';
+            switchResourceTab('upload');
+        }
+
+        function switchResourceTab(tab) {
+            const tabs = document.querySelectorAll('.resource-tab');
+            const uploadTab = document.getElementById('uploadTab');
+            const resourcesTab = document.getElementById('resourcesTab');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'upload') {
+                tabs[0].classList.add('active');
+                uploadTab.classList.add('active');
+                resourcesTab.classList.remove('active');
+            } else {
+                tabs[1].classList.add('active');
+                uploadTab.classList.remove('active');
+                resourcesTab.classList.add('active');
+                updateResourcesList();
+            }
+        }
+
+        function openNotificationModal() {
+            document.getElementById('notificationModal').classList.add('active');
+        }
+
+        function closeNotificationModal() {
+            document.getElementById('notificationModal').classList.remove('active');
+            document.getElementById('notificationTitle').value = '';
+            document.getElementById('notificationMessage').value = '';
+        }
+
+        let currentDepartmentFilter = '';
+
+        function openDepartmentModal(department) {
+            currentDepartmentFilter = department;
+            const deptNames = {
+                'history': 'History and International Studies (HIS)',
+                'iss': 'International Studies (ISS)',
+                'french': 'French',
+                'portuguese': 'Portuguese',
+                'linguistics': 'Linguistics',
+                'philosophy': 'Philosophy',
+                'theatre-art': 'Theatre Art',
+                'gns': 'GNS',
+                'english': 'English',
+                'peace-studies': 'Peace and Religious Studies',
+                '': 'All Departments'
+            };
+
+            document.getElementById('deptModalTitle').textContent = '📚 ' + deptNames[department];
+            document.getElementById('departmentModal').classList.add('active');
+            
+            // Load past questions
+            loadResourcesByType('past-questions');
+        }
+
+        function closeDepartmentModal() {
+            document.getElementById('departmentModal').classList.remove('active');
+        }
+
+        function switchResourceType(type) {
+            // Update tab styling
+            document.querySelectorAll('.resource-tabs .resource-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.includes('Past')) tab.classList.remove('active');
+            });
+            
+            // Set active tab
+            const tabs = document.querySelectorAll('.resource-tabs .resource-tab');
+            if (type === 'past-questions') {
+                tabs[0].classList.add('active');
+                document.getElementById('pastQuestionsTab').classList.add('active');
+                document.getElementById('otherResourcesTab').classList.remove('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('pastQuestionsTab').classList.remove('active');
+                document.getElementById('otherResourcesTab').classList.add('active');
+            }
+            
+            loadResourcesByType(type);
+        }
+
+        function loadResourcesByType(type) {
+            let query = db.collection('courses');
+            
+            if (currentDepartmentFilter) {
+                query = query.where('department', '==', currentDepartmentFilter);
+            }
+
+            query.get().then(snapshot => {
+                const resourcesList = type === 'past-questions' ? document.getElementById('pastQuestionsList') : document.getElementById('otherResourcesList');
+                
+                if (snapshot.empty) {
+                    resourcesList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No resources found</p>';
+                    return;
+                }
+
+                // Filter by type
+                let courses = [];
+                snapshot.forEach(doc => {
+                    const course = doc.data();
+                    if (type === 'past-questions' && course.category === 'past-questions') {
+                        courses.push({ id: doc.id, data: course });
+                    } else if (type === 'other' && course.category !== 'past-questions') {
+                        courses.push({ id: doc.id, data: course });
+                    }
+                });
+
+                if (courses.length === 0) {
+                    resourcesList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No resources found</p>';
+                    return;
+                }
+
+                // Sort by date
+                courses.sort((a, b) => {
+                    const dateA = a.data.uploadedDate ? a.data.uploadedDate.toDate() : new Date(0);
+                    const dateB = b.data.uploadedDate ? b.data.uploadedDate.toDate() : new Date(0);
+                    return dateB - dateA;
+                });
+
+                resourcesList.innerHTML = '';
+                courses.forEach(doc => {
+                    const resource = doc.data;
+                    const uploadedDate = resource.uploadedDate ? new Date(resource.uploadedDate.toDate()).toLocaleString() : 'N/A';
+                    const resourceCard = document.createElement('div');
+                    resourceCard.style.cssText = 'background: rgba(255, 140, 0, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); padding: 20px; border-left: 4px solid #ff8c00; border-radius: 4px;';
+                    resourceCard.innerHTML = `
+                        <h4 style="color: #ff8c00; margin-bottom: 10px; font-size: 1.2em;">${resource.title}</h4>
+                        <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 8px;"><strong>Course:</strong> ${resource.title}</p>
+                        <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 8px;"><strong>Type:</strong> ${resource.category.replace('-', ' ').toUpperCase()}</p>
+                        <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 10px;">${resource.description}</p>
+                        <p style="font-size: 0.85em; color: rgba(255, 255, 255, 0.5); margin-bottom: 15px;">
+                            <strong>File:</strong> ${resource.name} | <strong>Size:</strong> ${resource.size}<br>
+                            <strong>Posted:</strong> ${uploadedDate}
+                        </p>
+                        ${resource.cloudinaryUrl ? `<button onclick="downloadWithWatermark('${resource.cloudinaryUrl}', '${resource.name}')" style="display: inline-block; padding: 12px 25px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px;">⬇️ Download</button>` : ''}
+                    `;
+                    resourcesList.appendChild(resourceCard);
+                });
+            }).catch(error => {
+                console.error('Error loading resources:', error);
+                const resourcesList = type === 'past-questions' ? document.getElementById('pastQuestionsList') : document.getElementById('otherResourcesList');
+                resourcesList.innerHTML = '<p style="color: #ff6666; padding: 20px;">Error loading resources</p>';
+            });
+        }
+
+        let selectedFile = null;
+
+        function handleFileSelect(e) {
+            selectedFile = e.target.files[0];
+            if (selectedFile) {
+                const fileSize = (selectedFile.size / 1024 / 1024).toFixed(2);
+                document.getElementById('fileInfo').textContent = `Selected: ${selectedFile.name} (${fileSize} MB)`;
+            }
+        }
+
+        function uploadFile() {
+            // Validate all fields
+            const department = document.getElementById('fileDepartment').value;
+            const title = document.getElementById('fileTitle').value;
+            const description = document.getElementById('fileDescription').value;
+            const category = document.getElementById('fileCategory').value;
+
+            if (!department) {
+                alert('Please select a department');
+                return;
+            }
+            if (!title) {
+                alert('Please enter course name');
+                return;
+            }
+            if (!description) {
+                alert('Please enter course description');
+                return;
+            }
+            if (!category) {
+                alert('Please select form type');
+                return;
+            }
+            if (!selectedFile) {
+                alert('Please select a file to upload');
+                return;
+            }
+
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Uploading...';
+            btn.disabled = true;
+
+            // Step 1: Upload to Cloudinary
+            uploadToCloudinary(selectedFile).then(cloudinaryUrl => {
+                console.log('File uploaded to Cloudinary:', cloudinaryUrl);
+                
+                // Step 2: Save to Firebase Firestore
+                const fileData = {
+                    name: selectedFile.name,
+                    title: title,
+                    department: department,
+                    size: (selectedFile.size / 1024 / 1024).toFixed(2) + ' MB',
+                    type: selectedFile.type || 'Unknown',
+                    description: description,
+                    category: category,
+                    cloudinaryUrl: cloudinaryUrl,
+                    uploadedDate: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                // Save to Firestore
+                db.collection('courses').add(fileData).then(docRef => {
+                    console.log('Course saved to Firestore:', docRef.id);
+                    alert(`Course "${title}" posted successfully!`);
+                    
+                    // Clear form
+                    document.getElementById('fileDepartment').value = '';
+                    document.getElementById('fileInput').value = '';
+                    document.getElementById('fileInfo').textContent = '';
+                    document.getElementById('fileTitle').value = '';
+                    document.getElementById('fileDescription').value = '';
+                    document.getElementById('fileCategory').value = '';
+                    selectedFile = null;
+                    
+                    // Reset button
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    
+                    // Switch to resources tab to show uploaded file
+                    switchResourceTab('resources');
+                    updateFilesList();
+                }).catch(error => {
+                    console.error('Firestore error:', error);
+                    alert('Error saving to database: ' + error.message);
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                });
+            }).catch(error => {
+                console.error('Cloudinary upload error:', error);
+                alert('Error uploading file: ' + error.message);
+                btn.textContent = originalText;
+                btn.disabled = false;
+            });
+        }
+
+        // Upload file to Cloudinary
+        function uploadToCloudinary(file) {
+            return new Promise((resolve, reject) => {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+                fetch(CLOUDINARY_API_URL, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Cloudinary upload failed');
+                    return response.json();
+                })
+                .then(data => {
+                    resolve(data.secure_url);
+                })
+                .catch(error => reject(error));
+            });
+        }
+
+        function updateResourcesList() {
+            const resourcesList = document.getElementById('resourcesList');
+            
+            // Load from Firestore
+            db.collection('courses').orderBy('uploadedDate', 'desc').get().then(snapshot => {
+                if (snapshot.empty) {
+                    resourcesList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 40px; text-align: center; font-size: 1.2em;">No resources uploaded yet</p>';
+                } else {
+                    resourcesList.innerHTML = '';
+                    snapshot.forEach(doc => {
+                        const file = doc.data();
+                        const fileId = doc.id;
+                        const div = document.createElement('div');
+                        div.className = 'resource-item';
+                        const uploadedDate = file.uploadedDate ? new Date(file.uploadedDate.toDate()).toLocaleString() : 'N/A';
+                        div.innerHTML = `
+                            <h4>${file.title}</h4>
+                            <p style="color: #ff8c00; font-size: 0.9em;"><strong>Department:</strong> ${file.department}</p>
+                            <p>${file.description}</p>
+                            <p style="font-size: 0.9em;"><strong>File:</strong> ${file.name} | <strong>Size:</strong> ${file.size}</p>
+                            <span class="category-badge">${file.category.replace('-', ' ').toUpperCase()}</span>
+                            <p style="font-size: 0.85em; margin-top: 10px; color: rgba(255, 255, 255, 0.5);">Uploaded: ${uploadedDate}</p>
+                            <div class="resource-actions">
+                                ${file.cloudinaryUrl ? `<a href="${file.cloudinaryUrl}" target="_blank" class="download-btn" style="display: inline-block; text-decoration: none; text-align: center;">Download</a>` : ''}
+                                <button class="delete-btn" onclick="deleteFile('${fileId}')">Delete</button>
+                            </div>
+                        `;
+                        resourcesList.appendChild(div);
+                    });
+                }
+            }).catch(error => {
+                console.error('Error loading resources:', error);
+                resourcesList.innerHTML = '<p style="color: #ff6666; padding: 40px; text-align: center;">Error loading resources</p>';
+            });
+        }
+
+
+
+        function updateFilesList() {
+            const filesList = document.getElementById('filesList');
+            
+            // Load from Firestore
+            db.collection('courses').orderBy('uploadedDate', 'desc').get().then(snapshot => {
+                if (snapshot.empty) {
+                    filesList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No files uploaded yet</p>';
+                } else {
+                    filesList.innerHTML = '';
+                    snapshot.forEach(doc => {
+                        const file = doc.data();
+                        const fileId = doc.id;
+                        const div = document.createElement('div');
+                        div.className = 'file-item';
+                        const uploadedDate = file.uploadedDate ? new Date(file.uploadedDate.toDate()).toLocaleString() : 'N/A';
+                        div.innerHTML = `
+                            <div>
+                                <strong>${file.title}</strong><br>
+                                <span style="color: #ff8c00; font-size: 0.85em;">Dept: ${file.department} | Type: ${file.category}</span><br>
+                                ${file.description}<br>
+                                <span style="font-size: 0.85em;">File: ${file.name} | Size: ${file.size}</span><br>
+                                ${file.cloudinaryUrl ? `<a href="${file.cloudinaryUrl}" target="_blank" style="color: #ff8c00; font-size: 0.85em;">View on Cloudinary</a><br>` : ''}
+                                <small>Posted: ${uploadedDate}</small>
+                            </div>
+                            <button class="delete-btn" onclick="deleteFile('${fileId}')">Delete</button>
+                        `;
+                        filesList.appendChild(div);
+                    });
+                }
+            }).catch(error => {
+                console.error('Error loading files:', error);
+                filesList.innerHTML = '<p style="color: #ff6666; padding: 20px;">Error loading files</p>';
+            });
+        }
+
+        function deleteFile(fileId) {
+            if (confirm('Are you sure you want to delete this resource?')) {
+                db.collection('courses').doc(fileId).delete().then(() => {
+                    console.log('Course deleted:', fileId);
+                    updateFilesList();
+                    updateResourcesList();
+                }).catch(error => {
+                    console.error('Error deleting:', error);
+                    alert('Error deleting file');
+                });
+            }
+        }
+
+        function sendNotification(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('notificationTitle').value;
+            const message = document.getElementById('notificationMessage').value;
+
+            if (!title || !message) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Save notification to Firestore
+            db.collection('notifications').add({
+                title: title,
+                message: message,
+                sentDate: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(docRef => {
+                console.log('Notification sent:', docRef.id);
+                
+                // Also get user count for alert
+                db.collection('students').get().then(snapshot => {
+                    const userCount = snapshot.size;
+                    alert(`Notification Sent!\n\nTitle: ${title}\nMessage: ${message}\n\nSent to ${userCount} user(s)`);
+                    closeNotificationModal();
+                    document.getElementById('notificationTitle').value = '';
+                    document.getElementById('notificationMessage').value = '';
+                });
+            }).catch(error => {
+                console.error('Error sending notification:', error);
+                alert('Error sending notification: ' + error.message);
+            });
+        }
+
+        // Feedback Functions
+        function openFeedbackModal() {
+            document.getElementById('feedbackModal').classList.add('active');
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').classList.remove('active');
+            document.getElementById('feedbackSubject').value = '';
+            document.getElementById('feedbackMessage').value = '';
+        }
+
+        // Watermark function for downloads
+        function addWatermarkToUrl(cloudinaryUrl) {
+            if (!cloudinaryUrl) return cloudinaryUrl;
+            
+            // Parse Cloudinary URL
+            // Example: https://res.cloudinary.com/dzhdgxjhl/image/upload/v1234567890/filename.jpg
+            // We need to insert transformation parameters after /upload/
+            
+            const parts = cloudinaryUrl.split('/upload/');
+            if (parts.length !== 2) return cloudinaryUrl;
+            
+            // Add watermark transformation
+            // Using Cloudinary's l_ (layer) parameter to add text watermark
+            const baseUrl = parts[0] + '/upload/';
+            const filePath = parts[1];
+            
+            // Create watermark with:
+            // w_text_watermark: "FLASH100 - Powered by Rewarder"
+            // Using Cloudinary's text overlay feature
+            const watermarkUrl = baseUrl + 
+                'c_fit,w_0.9,l_text:Arial_40_bold:FLASH100%20-%20Powered%20by%20Rewarder,g_south,y_20,co_white/' +
+                filePath;
+            
+            return watermarkUrl;
+        }
+
+        // Download with watermark function
+        function downloadWithWatermark(cloudinaryUrl, fileName) {
+            if (!cloudinaryUrl) {
+                alert('Download link not available');
+                return;
+            }
+
+            // Add watermark to the URL
+            const watermarkedUrl = addWatermarkToUrl(cloudinaryUrl);
+            
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = watermarkedUrl;
+            link.download = fileName || 'FLASH100-Resource';
+            link.target = '_blank';
+            
+            // For Cloudinary URLs, we can append ?dl=1 to force download
+            link.href = watermarkedUrl + '?dl=1';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function submitFeedback(e) {
+            e.preventDefault();
+            
+            const subject = document.getElementById('feedbackSubject').value;
+            const message = document.getElementById('feedbackMessage').value;
+
+            // Save feedback to Firestore
+            db.collection('feedback').add({
+                studentName: currentStudentData.name,
+                studentMatric: currentStudentData.matric,
+                studentEmail: currentStudentData.email,
+                subject: subject,
+                message: message,
+                submittedDate: firebase.firestore.FieldValue.serverTimestamp(),
+                read: false
+            }).then(docRef => {
+                console.log('Feedback submitted:', docRef.id);
+                alert('Thank you for your feedback!');
+                closeFeedbackModal();
+            }).catch(error => {
+                console.error('Error submitting feedback:', error);
+                alert('Error submitting feedback: ' + error.message);
+            });
+        }
+
+        function loadStudentMessages() {
+            const messagesList = document.getElementById('studentMessages');
+            messagesList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">Loading messages...</p>';
+            
+            // Get personal messages for this student
+            db.collection('messages')
+                .where('recipientMatric', '==', currentStudentData.matric)
+                .get().then(snapshot => {
+                if (snapshot.empty) {
+                    messagesList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No personal messages yet</p>';
+                } else {
+                    const messages = [];
+                    snapshot.forEach(doc => {
+                        messages.push({ id: doc.id, data: doc.data() });
+                    });
+                    
+                    // Sort by newest first
+                    messages.sort((a, b) => {
+                        const dateA = a.data.sentDate ? a.data.sentDate.toDate() : new Date(0);
+                        const dateB = b.data.sentDate ? b.data.sentDate.toDate() : new Date(0);
+                        return dateB - dateA;
+                    });
+
+                    messagesList.innerHTML = '';
+                    messages.forEach(doc => {
+                        const msg = doc.data;
+                        const sentDate = msg.sentDate ? new Date(msg.sentDate.toDate()).toLocaleString() : 'N/A';
+                        const msgCard = document.createElement('div');
+                        msgCard.style.cssText = 'background: rgba(255, 140, 0, 0.08); border: 1px solid rgba(255, 140, 0, 0.3); padding: 20px; border-left: 4px solid #ff8c00; border-radius: 4px;';
+                        msgCard.innerHTML = `
+                            <h4 style="color: #ff8c00; margin-bottom: 10px; font-size: 1.1em;">📧 From Admin</h4>
+                            <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 10px; line-height: 1.6;">${msg.message}</p>
+                            <p style="font-size: 0.85em; color: rgba(255, 255, 255, 0.5);">Sent: ${sentDate}</p>
+                        `;
+                        messagesList.appendChild(msgCard);
+                    });
+                }
+            }).catch(error => {
+                console.error('Error loading messages:', error);
+                messagesList.innerHTML = '<p style="color: #ff6666; padding: 20px;">Error loading messages</p>';
+            });
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const uploadModal = document.getElementById('uploadModal');
+            const notificationModal = document.getElementById('notificationModal');
+            const feedbackModal = document.getElementById('feedbackModal');
+            const departmentModal = document.getElementById('departmentModal');
+            
+            if (event.target === uploadModal) {
+                closeUploadModal();
+            }
+            if (event.target === notificationModal) {
+                closeNotificationModal();
+            }
+            if (event.target === feedbackModal) {
+                closeFeedbackModal();
+            }
+            if (event.target === departmentModal) {
+                closeDepartmentModal();
+            }
+        }
+    </script>
+</body>
+</html>
