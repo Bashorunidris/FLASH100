@@ -16,90 +16,11 @@
             background: #1a1a2e;
             min-height: 100vh;
             color: #fff;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Top Header */
-        .top-header {
-            background: linear-gradient(135deg, #ff8c00 0%, #e67700 100%);
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .header-logo {
-            height: 45px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        .header-brand {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .header-brand-title {
-            font-size: 1.3em;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: #fff;
-        }
-
-        .header-brand-subtitle {
-            font-size: 0.85em;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 500;
-        }
-
-        .header-center {
-            text-align: center;
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .header-office {
-            font-size: 1.1em;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .header-right {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 4px;
-        }
-
-        .header-person {
-            font-size: 0.95em;
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .header-position {
-            font-size: 0.85em;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 500;
         }
 
         .split-container {
             display: flex;
             min-height: 100vh;
-            flex: 1;
         }
 
         .left-section {
@@ -459,32 +380,6 @@
         }
 
         @media (max-width: 768px) {
-            .top-header {
-                padding: 15px 20px;
-                gap: 15px;
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .header-left {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .header-center {
-                width: 100%;
-                min-width: auto;
-            }
-
-            .header-office {
-                font-size: 0.95em;
-            }
-
-            .header-right {
-                width: 100%;
-                align-items: center;
-            }
-
             .left-section {
                 padding: 30px 20px;
             }
@@ -1251,34 +1146,6 @@
         }
 
         @media (max-width: 480px) {
-            .top-header {
-                padding: 12px 15px;
-            }
-
-            .header-logo {
-                height: 35px;
-            }
-
-            .header-brand-title {
-                font-size: 1.1em;
-            }
-
-            .header-brand-subtitle {
-                font-size: 0.75em;
-            }
-
-            .header-office {
-                font-size: 0.85em;
-            }
-
-            .header-person {
-                font-size: 0.85em;
-            }
-
-            .header-position {
-                font-size: 0.75em;
-            }
-
             .left-section {
                 padding: 25px 15px;
                 min-height: 30vh;
@@ -1395,24 +1262,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 </head>
 <body>
-    <!-- Top Header -->
-    <div class="top-header">
-        <div class="header-left">
-            <img src="https://i.ibb.co/qY1HQt95/1000034835-removebg-preview.png" alt="Rewarder Logo" class="header-logo">
-            <div class="header-brand">
-                <span class="header-brand-title">REWARDER</span>
-                <span class="header-brand-subtitle">POWERED BY</span>
-            </div>
-        </div>
-        <div class="header-center">
-            <div class="header-office">OFFICE OF THE FASA LASU ASSISTANT GENERAL SECRETARY</div>
-        </div>
-        <div class="header-right">
-            <span class="header-person">COMRADE: OLOYEDE TOLUWANIMI</span>
-            <span class="header-position">FASA LASU Assistant General Secretary</span>
-        </div>
-    </div>
-
     <div class="split-container" id="authSection">
         <div class="left-section">
             <div class="branding">
