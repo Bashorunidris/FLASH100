@@ -1635,9 +1635,10 @@
         const db = firebase.firestore();
         const storage = firebase.storage();
 
-        const ADMIN_EMAIL = 'bashorunidris01@gmail.com';
+        const ADMIN_EMAIL = 'toluwanioloyede27@gmail.com';
+        // Password changed from redacted placeholder to actual credentials
         const ADMIN_PASSWORD = '1234ABCD';
-
+        
         function switchTab(tab) {
             const tabs = document.querySelectorAll('.tab');
             const forms = document.querySelectorAll('.form-content');
@@ -2198,13 +2199,15 @@
                         const coursesGrid = document.createElement('div');
                         coursesGrid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px;';
                         
+                        // Define these outside the loop so they can be used later
+                        const rgbaColor = hexToRgba(color, 0.05);
+                        const rgbaColorBorder = hexToRgba(color, 0.3);
+                        const rgbaColorLight = hexToRgba(color, 0.2);
+                        
                         filteredCourses.forEach(doc => {
                             const course = doc.data;
                             const uploadedDate = course.uploadedDate ? new Date(course.uploadedDate.toDate()).toLocaleString() : 'N/A';
                             const courseCard = document.createElement('div');
-                            const rgbaColor = hexToRgba(color, 0.05);
-                            const rgbaColorBorder = hexToRgba(color, 0.3);
-                            const rgbaColorLight = hexToRgba(color, 0.2);
                             courseCard.style.cssText = `background: ${rgbaColor}; border: 1px solid ${rgbaColorBorder}; padding: 25px; border-left: 4px solid ${color}; border-radius: 4px; display: flex; flex-direction: column;`;
                             courseCard.innerHTML = `
                                 <h4 style="color: ${color}; margin-bottom: 12px; font-size: 1.2em;">${course.title}</h4>
