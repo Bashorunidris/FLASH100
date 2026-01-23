@@ -2786,7 +2786,12 @@
                     console.log('📥 Downloading from Cloudinary as blob...');
                     alert('⏳ Downloading, please wait...');
                     
-                    fetch(fileUrl)
+                    fetch(fileUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': '*/*'
+                        }
+                    })
                         .then(response => {
                             if (!response.ok) throw new Error(`HTTP ${response.status}`);
                             return response.blob();
@@ -2811,7 +2816,10 @@
                         })
                         .catch(error => {
                             console.error('Blob download error:', error);
-                            alert('❌ Download failed: ' + error.message);
+                            // Fallback: Open in new tab for manual download
+                            console.log('Trying fallback: opening in new tab...');
+                            window.open(fileUrl, '_blank');
+                            alert('⚠️ Download opened in new tab. Right-click "Save As" if needed.');
                         });
                 } else {
                     // For Firebase Storage URLs
