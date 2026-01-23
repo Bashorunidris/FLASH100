@@ -1447,6 +1447,10 @@
                     <button class="dept-tab" onclick="filterByDepartment('peace-studies')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Peace & Religious Studies</button>
                 </div>
 
+                <!-- Courses List Container -->
+                <div id="studentCoursesList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+                    <p style="color: rgba(255, 255, 255, 0.5); padding: 20px; grid-column: 1 / -1;">Loading courses...</p>
+                </div>
             </div>
 
             <!-- Notifications Section -->
@@ -1874,7 +1878,7 @@
                                 <strong>File:</strong> ${course.name} | <strong>Size:</strong> ${course.size}<br>
                                 <strong>Posted:</strong> ${uploadedDate}
                             </p>
-                            ${course.firebaseStorageUrl ? `<button onclick="downloadWithWatermark('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download Resource</button>` : course.cloudinaryUrl ? `<button onclick="downloadWithWatermark('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download Resource</button>` : ''}
+                            ${course.firebaseStorageUrl ? `<button onclick="downloadWithWatermark('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download Resource</button>` : '<p style="color: #ff8c00; font-size: 0.9em;">⚠️ File not available</p>'}
                         `;
                         coursesList.appendChild(courseCard);
                     });
@@ -2765,53 +2769,67 @@
                     return;
                 }
 
-                console.log('📥 Downloading to device...');
-                
-                // Use XMLHttpRequest for better CORS support
-                const xhr = new XMLHttpRequest();
-                xhr.responseType = 'blob';
-                
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        console.log('✅ File received, size:', xhr.response.size);
-                        
-                        // Create blob URL
-                        const blobUrl = URL.createObjectURL(xhr.response);
-                        
-                        // Create download link
-                        const link = document.createElement('a');
-                        link.href = blobUrl;
-                        
-                        // Generate filename with FLASH100 watermark
-                        const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-                        const baseName = fileName ? fileName.split('.')[0] : 'resource';
-                        const extension = fileName ? fileName.split('.').pop() : 'pdf';
-                        link.download = `FLASH100_${baseName}_${timestamp}.${extension}`;
-                        
-                        // Trigger download to device
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        
-                        // Clean up blob URL
-                        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
-                        
-                        console.log('✅ Download complete to device:', link.download);
-                    } else {
-                        throw new Error('Failed to download: Status ' + xhr.status);
-                    }
-                };
-                
-                xhr.onerror = function() {
-                    console.error('Download error:', xhr.statusText);
-                    alert('❌ Download failed. Please check your internet connection and try again.');
-                };
+                console.log('📥 Starting download...');
                 
                 // Add alt=media parameter for Firebase Storage direct download
                 let url = firebaseStorageUrl;
                 if (!url.includes('alt=media')) {
                     url = url.includes('?') ? url + '&alt=media' : url + '?alt=media';
                 }
+                
+                // Use XMLHttpRequest to fetch as blob (proven working method from record.html)
+                const xhr = new XMLHttpRequest();
+                xhr.responseType = 'blob';
+                
+                xhr.onload = function() {
+                    try {
+                        if (xhr.status === 200 && xhr.response.size > 0) {
+                            // Create blob from response
+                            const fileBlob = xhr.response;
+                            console.log('✅ File blob created, size:', fileBlob.size);
+                            
+                            // Create object URL from blob
+                            const blobUrl = URL.createObjectURL(fileBlob);
+                            
+                            // Create download link (same as record.html works)
+                            const link = document.createElement('a');
+                            link.href = blobUrl;
+                            link.style.display = 'none';
+                            
+                            // Generate filename with FLASH100 watermark
+                            const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                            const baseName = fileName ? fileName.split('.')[0] : 'resource';
+                            const extension = fileName ? fileName.split('.').pop() : 'pdf';
+                            link.download = `FLASH100_${baseName}_${timestamp}.${extension}`;
+                            
+                            // Trigger download to device (proven method)
+                            document.body.appendChild(link);
+                            console.log('⬇️ Download link added to DOM');
+                            
+                            link.click();
+                            console.log('✓ Download triggered');
+                            
+                            // Clean up
+                            setTimeout(() => {
+                                document.body.removeChild(link);
+                                URL.revokeObjectURL(blobUrl);
+                                console.log('✓ Cleanup complete');
+                            }, 1000);
+                            
+                            console.log('📥 Download complete:', link.download);
+                        } else {
+                            throw new Error('File download failed');
+                        }
+                    } catch (error) {
+                        console.error('Download processing error:', error);
+                        alert('❌ Download failed. Please check your internet connection and try again.');
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    console.error('XHR error:', xhr.status, xhr.statusText);
+                    alert('❌ Download failed. Please check your internet connection and try again.');
+                };
                 
                 xhr.open('GET', url);
                 xhr.send();
