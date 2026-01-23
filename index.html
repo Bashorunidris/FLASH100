@@ -1447,7 +1447,6 @@
                     <button class="dept-tab" onclick="filterByDepartment('peace-studies')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Peace & Religious Studies</button>
                 </div>
 
-
             </div>
 
             <!-- Notifications Section -->
@@ -2092,13 +2091,15 @@
                     const coursesGrid = document.createElement('div');
                     coursesGrid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px;';
                     
+                    // Define these outside the loop so they can be used later
+                    const rgbaColor = hexToRgba(color, 0.05);
+                    const rgbaColorBorder = hexToRgba(color, 0.3);
+                    const rgbaColorLight = hexToRgba(color, 0.2);
+                    
                     courses.forEach(doc => {
                         const course = doc.data;
                         const uploadedDate = course.uploadedDate ? new Date(course.uploadedDate.toDate()).toLocaleString() : 'N/A';
                         const courseCard = document.createElement('div');
-                        const rgbaColor = hexToRgba(color, 0.05);
-                        const rgbaColorBorder = hexToRgba(color, 0.3);
-                        const rgbaColorLight = hexToRgba(color, 0.2);
                         courseCard.style.cssText = `background: ${rgbaColor}; border: 1px solid ${rgbaColorBorder}; padding: 25px; border-left: 4px solid ${color}; border-radius: 4px; display: flex; flex-direction: column;`;
                         courseCard.innerHTML = `
                             <h4 style="color: ${color}; margin-bottom: 12px; font-size: 1.2em;">${course.title}</h4>
