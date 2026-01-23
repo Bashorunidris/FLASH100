@@ -1579,7 +1579,7 @@
                         <input type="file" id="fileInput" class="file-input" onchange="handleFileSelect(event)">
                         <div id="fileInfo" class="file-info"></div>
                     </div>
-                    <button class="modal-btn" onclick="uploadFile()">Post</button>
+                    <button class="modal-btn" onclick="uploadFile(event)">Post</button>
                 </div>
 
                 <div id="resourcesTab" class="form-content">
@@ -2517,7 +2517,7 @@
             }
         }
 
-        function uploadFile() {
+        function uploadFile(evt) {
             // Validate all fields
             const department = document.getElementById('fileDepartment').value;
             const title = document.getElementById('fileTitle').value;
@@ -2546,7 +2546,7 @@
             }
 
             // Show loading state
-            const btn = event.target;
+            const btn = evt.target;
             const originalText = btn.textContent;
             btn.textContent = 'Uploading...';
             btn.disabled = true;
@@ -2758,50 +2758,67 @@
         }
 
         // Download from Firebase Storage
-        async function downloadWithWatermark(firebaseStorageUrl, fileName) {
+        function downloadWithWatermark(firebaseStorageUrl, fileName) {
             try {
                 if (!firebaseStorageUrl) {
                     alert('Download link not available');
                     return;
                 }
 
-                // Show loading state
-                console.log('📥 Starting download from Firebase Storage...');
-
-                // Fetch the file from Firebase Storage
-                const response = await fetch(firebaseStorageUrl);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch file: ${response.statusText}`);
+                console.log('📥 Downloading to device...');
+                
+                // Use XMLHttpRequest for better CORS support
+                const xhr = new XMLHttpRequest();
+                xhr.responseType = 'blob';
+                
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        console.log('✅ File received, size:', xhr.response.size);
+                        
+                        // Create blob URL
+                        const blobUrl = URL.createObjectURL(xhr.response);
+                        
+                        // Create download link
+                        const link = document.createElement('a');
+                        link.href = blobUrl;
+                        
+                        // Generate filename with FLASH100 watermark
+                        const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                        const baseName = fileName ? fileName.split('.')[0] : 'resource';
+                        const extension = fileName ? fileName.split('.').pop() : 'pdf';
+                        link.download = `FLASH100_${baseName}_${timestamp}.${extension}`;
+                        
+                        // Trigger download to device
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                        // Clean up blob URL
+                        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+                        
+                        console.log('✅ Download complete to device:', link.download);
+                    } else {
+                        throw new Error('Failed to download: Status ' + xhr.status);
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    console.error('Download error:', xhr.statusText);
+                    alert('❌ Download failed. Please check your internet connection and try again.');
+                };
+                
+                // Add alt=media parameter for Firebase Storage direct download
+                let url = firebaseStorageUrl;
+                if (!url.includes('alt=media')) {
+                    url = url.includes('?') ? url + '&alt=media' : url + '?alt=media';
                 }
+                
+                xhr.open('GET', url);
+                xhr.send();
 
-                // Convert response to blob
-                const blob = await response.blob();
-                console.log('📥 File fetched, size:', blob.size);
-
-                // Create download link from blob
-                const blobUrl = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = blobUrl;
-                
-                // Generate filename with FLASH100 watermark in name
-                const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-                const baseName = fileName ? fileName.split('.')[0] : 'resource';
-                const extension = fileName ? fileName.split('.').pop() : 'pdf';
-                link.download = `FLASH100_${baseName}_${timestamp}.${extension}`;
-                
-                // Trigger download
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                // Clean up blob URL
-                setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
-                
-                console.log('✅ Download completed:', link.download);
-                alert('✅ Download started: ' + link.download);
             } catch (error) {
                 console.error('Download error:', error);
-                alert('❌ Download failed: ' + error.message);
+                alert('❌ Download failed. Please check your internet connection and try again.');
             }
         }
 
