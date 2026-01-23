@@ -1447,10 +1447,6 @@
                     <button class="dept-tab" onclick="filterByDepartment('peace-studies')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Peace & Religious Studies</button>
                 </div>
 
-                <!-- Courses List Container -->
-                <div id="studentCoursesList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
-                    <p style="color: rgba(255, 255, 255, 0.5); padding: 20px; grid-column: 1 / -1;">Loading courses...</p>
-                </div>
             </div>
 
             <!-- Notifications Section -->
@@ -1878,7 +1874,7 @@
                                 <strong>File:</strong> ${course.name} | <strong>Size:</strong> ${course.size}<br>
                                 <strong>Posted:</strong> ${uploadedDate}
                             </p>
-                            ${course.firebaseStorageUrl ? `<button onclick="downloadWithWatermark('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download Resource</button>` : '<p style="color: #ff8c00; font-size: 0.9em;">⚠️ File not available</p>'}
+                            ${course.firebaseStorageUrl ? `<button onclick="downloadWithWatermark('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download Resource</button>` : course.cloudinaryUrl ? `<button onclick="downloadWithWatermark('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download Resource</button>` : ''}
                         `;
                         coursesList.appendChild(courseCard);
                     });
@@ -2555,18 +2551,24 @@
             btn.textContent = 'Uploading...';
             btn.disabled = true;
 
-            // Step 1: Upload to Firebase Storage
-            const storageRef = storage.ref('courses/' + Date.now() + '_' + selectedFile.name);
-            
-            storageRef.put(selectedFile).then(snapshot => {
-                console.log('File uploaded to Firebase Storage');
+            // Step 1: Upload to Cloudinary
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+            fetch(CLOUDINARY_API_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
                 
-                // Step 2: Get download URL
-                return storageRef.getDownloadURL();
-            }).then(downloadUrl => {
-                console.log('File download URL:', downloadUrl);
+                console.log('File uploaded to Cloudinary:', data.secure_url);
                 
-                // Step 3: Save to Firebase Firestore with download URL
+                // Step 2: Save to Firestore with Cloudinary URL
                 const fileData = {
                     name: selectedFile.name,
                     title: title,
@@ -2575,13 +2577,14 @@
                     type: selectedFile.type || 'Unknown',
                     description: description,
                     category: category,
-                    firebaseStorageUrl: downloadUrl,
+                    cloudinaryUrl: data.url || data.secure_url,
                     uploadedDate: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
                 // Save to Firestore
                 return db.collection('courses').add(fileData);
-            }).then(docRef => {
+            })
+            .then(docRef => {
                 console.log('Course saved to Firestore:', docRef.id);
                 alert(`Course "${title}" posted successfully!`);
                 
@@ -2601,7 +2604,8 @@
                 // Switch to resources tab to show uploaded file
                 switchResourceTab('resources');
                 updateFilesList();
-            }).catch(error => {
+            })
+            .catch(error => {
                 console.error('Upload error:', error);
                 alert('Error uploading file: ' + error.message);
                 btn.textContent = originalText;
@@ -2761,82 +2765,78 @@
             document.getElementById('feedbackMessage').value = '';
         }
 
-        // Download from Firebase Storage
-        function downloadWithWatermark(firebaseStorageUrl, fileName) {
+        // Download directly from Firebase Storage
+        function downloadWithWatermark(fileUrl, fileName) {
             try {
-                if (!firebaseStorageUrl) {
+                if (!fileUrl) {
                     alert('Download link not available');
                     return;
                 }
 
-                console.log('📥 Starting download...');
+                // Generate filename with FLASH100 watermark
+                const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                const baseName = fileName ? fileName.split('.')[0] : 'resource';
+                const extension = fileName ? fileName.split('.').pop() : 'pdf';
+                const downloadName = `FLASH100_${baseName}_${timestamp}.${extension}`;
                 
-                // Add alt=media parameter for Firebase Storage direct download
-                let url = firebaseStorageUrl;
-                if (!url.includes('alt=media')) {
-                    url = url.includes('?') ? url + '&alt=media' : url + '?alt=media';
-                }
+                const isCloudinary = fileUrl.includes('cloudinary.com') || fileUrl.includes('res.cloudinary.com');
                 
-                // Use XMLHttpRequest to fetch as blob (proven working method from record.html)
-                const xhr = new XMLHttpRequest();
-                xhr.responseType = 'blob';
-                
-                xhr.onload = function() {
-                    try {
-                        if (xhr.status === 200 && xhr.response.size > 0) {
-                            // Create blob from response
-                            const fileBlob = xhr.response;
-                            console.log('✅ File blob created, size:', fileBlob.size);
+                if (isCloudinary) {
+                    // Load Cloudinary file as blob then download
+                    console.log('📥 Downloading from Cloudinary as blob...');
+                    alert('⏳ Downloading, please wait...');
+                    
+                    fetch(fileUrl)
+                        .then(response => {
+                            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                            return response.blob();
+                        })
+                        .then(blob => {
+                            // Create blob URL
+                            const blobUrl = URL.createObjectURL(blob);
                             
-                            // Create object URL from blob
-                            const blobUrl = URL.createObjectURL(fileBlob);
-                            
-                            // Create download link (same as record.html works)
+                            // Create download link
                             const link = document.createElement('a');
                             link.href = blobUrl;
-                            link.style.display = 'none';
-                            
-                            // Generate filename with FLASH100 watermark
-                            const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-                            const baseName = fileName ? fileName.split('.')[0] : 'resource';
-                            const extension = fileName ? fileName.split('.').pop() : 'pdf';
-                            link.download = `FLASH100_${baseName}_${timestamp}.${extension}`;
-                            
-                            // Trigger download to device (proven method)
+                            link.download = downloadName;
                             document.body.appendChild(link);
-                            console.log('⬇️ Download link added to DOM');
-                            
                             link.click();
-                            console.log('✓ Download triggered');
+                            document.body.removeChild(link);
                             
-                            // Clean up
-                            setTimeout(() => {
-                                document.body.removeChild(link);
-                                URL.revokeObjectURL(blobUrl);
-                                console.log('✓ Cleanup complete');
-                            }, 1000);
+                            // Cleanup blob URL after a delay
+                            setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
                             
-                            console.log('📥 Download complete:', link.download);
-                        } else {
-                            throw new Error('File download failed');
-                        }
-                    } catch (error) {
-                        console.error('Download processing error:', error);
-                        alert('❌ Download failed. Please check your internet connection and try again.');
-                    }
-                };
+                            console.log('✅ Download complete:', downloadName);
+                            alert('✅ Download started: ' + downloadName);
+                        })
+                        .catch(error => {
+                            console.error('Blob download error:', error);
+                            alert('❌ Download failed: ' + error.message);
+                        });
+                } else {
+                    // For Firebase Storage URLs
+                    console.log('📥 Starting download from Firebase Storage...');
+                    
+                    // Add alt=media parameter to Firebase Storage URL to force download
+                    const downloadUrl = fileUrl.includes('alt=media') ? fileUrl : fileUrl + '?alt=media';
+                    
+                    // Create and trigger download link
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = downloadName;
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    console.log('✅ Download started:', downloadName);
+                    alert('✅ Download started: ' + downloadName);
+                }
                 
-                xhr.onerror = function() {
-                    console.error('XHR error:', xhr.status, xhr.statusText);
-                    alert('❌ Download failed. Please check your internet connection and try again.');
-                };
-                
-                xhr.open('GET', url);
-                xhr.send();
-
             } catch (error) {
                 console.error('Download error:', error);
-                alert('❌ Download failed. Please check your internet connection and try again.');
+                alert('❌ Download failed: ' + error.message);
             }
         }
 
