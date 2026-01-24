@@ -1260,8 +1260,136 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-</head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // Set up PDF.js worker
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+
+        // Offline Mode - Detect connection status
+        let isOnline = navigator.onLine;
+        
+        window.addEventListener('online', () => {
+            isOnline = true;
+            console.log('✅ Back online');
+            showOfflineStatus();
+            syncOfflineData();
+        });
+        
+        window.addEventListener('offline', () => {
+            isOnline = false;
+            console.log('📴 Offline mode');
+            showOfflineStatus();
+        });
+        
+        function showOfflineStatus() {
+            const indicator = document.getElementById('offlineIndicator');
+            if (!indicator) return;
+            
+            if (!isOnline) {
+                indicator.style.display = 'block';
+                indicator.innerHTML = '📴 Offline Mode - Data will sync when online';
+            } else {
+                indicator.style.display = 'none';
+            }
+        }
+        
+        // Cache data to localStorage
+        function cacheData(key, data) {
+            try {
+                localStorage.setItem('flash100_' + key, JSON.stringify({
+                    data: data,
+                    timestamp: new Date().getTime()
+                }));
+                console.log('💾 Cached:', key);
+            } catch (error) {
+                console.error('Cache error:', error);
+            }
+        }
+        
+        // Get cached data
+        function getCachedData(key) {
+            try {
+                const cached = localStorage.getItem('flash100_' + key);
+                if (cached) {
+                    return JSON.parse(cached).data;
+                }
+            } catch (error) {
+                console.error('Retrieve cache error:', error);
+            }
+            return null;
+        }
+        
+        // Save feedback/data when offline
+        function saveOfflineData(type, data) {
+            try {
+                let offlineQueue = JSON.parse(localStorage.getItem('flash100_offlineQueue')) || [];
+                offlineQueue.push({
+                    type: type,
+                    data: data,
+                    timestamp: new Date().getTime()
+                });
+                localStorage.setItem('flash100_offlineQueue', JSON.stringify(offlineQueue));
+                console.log('📝 Offline data saved:', type);
+            } catch (error) {
+                console.error('Save offline error:', error);
+            }
+        }
+        
+        // Sync offline data when back online
+        function syncOfflineData() {
+            try {
+                const offlineQueue = JSON.parse(localStorage.getItem('flash100_offlineQueue')) || [];
+                
+                if (offlineQueue.length === 0) {
+                    console.log('✅ No offline data to sync');
+                    return;
+                }
+                
+                console.log('🔄 Syncing', offlineQueue.length, 'offline items...');
+                
+                offlineQueue.forEach(item => {
+                    if (item.type === 'feedback') {
+                        // Re-submit feedback
+                        submitOfflineFeedback(item.data);
+                    }
+                });
+                
+                // Clear queue after sync attempt
+                localStorage.removeItem('flash100_offlineQueue');
+                console.log('✅ Sync complete');
+            } catch (error) {
+                console.error('Sync error:', error);
+            }
+        }
+        
+        function submitOfflineFeedback(feedbackData) {
+            db.collection('feedback').add({
+                studentName: feedbackData.studentName,
+                studentMatric: feedbackData.studentMatric,
+                studentEmail: feedbackData.studentEmail,
+                subject: feedbackData.subject,
+                message: feedbackData.message,
+                submittedDate: firebase.firestore.FieldValue.serverTimestamp(),
+                read: false,
+                syncedFromOffline: true
+            }).then(() => {
+                console.log('✅ Offline feedback submitted to server');
+            }).catch(error => {
+                console.error('Failed to submit offline feedback:', error);
+                // Re-queue if failed
+                saveOfflineData('feedback', feedbackData);
+            });
+        }
+    </script>
+    </head>
 <body>
+    <!-- Offline Indicator -->
+    <div id="offlineIndicator" style="display: none; position: fixed; top: 0; left: 0; right: 0; background: #ff6b6b; color: #fff; padding: 15px 20px; text-align: center; font-weight: 600; z-index: 9999;">
+        📴 Offline Mode - Data will sync when online
+    </div>
+
     <div class="split-container" id="authSection">
         <div class="left-section">
             <div class="branding">
@@ -1503,6 +1631,19 @@
     </div>
 
     <!-- Feedback Modal -->
+    <!-- File Viewer Modal -->
+    <div class="modal" id="fileViewerModal" style="display: none; background: rgba(0, 0, 0, 0.95); z-index: 20000; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto;">
+        <div class="modal-content" style="min-height: 100vh; overflow-y: auto; background: #1a1a2e;">
+            <div class="modal-header">
+                <h3 style="flex: 1;">📄 File Viewer</h3>
+                <button class="close-btn" onclick="closeFileViewer()">&times;</button>
+            </div>
+            <div id="fileViewerContent" style="padding: 20px; min-height: 80vh;">
+                <p style="color: #fff; text-align: center;">⏳ Loading...</p>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="feedbackModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1874,7 +2015,7 @@
                                 <strong>File:</strong> ${course.name} | <strong>Size:</strong> ${course.size}<br>
                                 <strong>Posted:</strong> ${uploadedDate}
                             </p>
-                            ${course.firebaseStorageUrl ? `<button onclick="downloadWithWatermark('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download Resource</button>` : course.cloudinaryUrl ? `<button onclick="downloadWithWatermark('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download Resource</button>` : ''}
+                            ${course.firebaseStorageUrl ? `<button onclick="viewFile('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none; margin-right: 10px;">👁️ View</button><button onclick="downloadWithWatermark('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download</button>` : course.cloudinaryUrl ? `<button onclick="viewFile('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none; margin-right: 10px;">👁️ View</button><button onclick="downloadWithWatermark('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download</button>` : ''}
                         `;
                         coursesList.appendChild(courseCard);
                     });
@@ -2110,7 +2251,13 @@
                                 <strong>Size:</strong> ${course.size}<br>
                                 <strong>Posted:</strong> ${uploadedDate}
                             </p>
-                            ${course.firebaseStorageUrl ? `<button onclick="downloadWithWatermark('${course.firebaseStorageUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; width: 100%; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download Resource</button>` : course.cloudinaryUrl ? `<button onclick="downloadWithWatermark('${course.cloudinaryUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; width: 100%; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download Resource</button>` : ''}
+                            ${course.firebaseStorageUrl ? `<div style="display: flex; gap: 10px;">
+                               <button onclick="viewFile('${course.firebaseStorageUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">👁️ View</button>
+                               <button onclick="downloadWithWatermark('${course.firebaseStorageUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download</button>
+                           </div>` : course.cloudinaryUrl ? `<div style="display: flex; gap: 10px;">
+                               <button onclick="viewFile('${course.cloudinaryUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">👁️ View</button>
+                               <button onclick="downloadWithWatermark('${course.cloudinaryUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download</button>
+                           </div>` : ''}
                         `;
                         coursesGrid.appendChild(courseCard);
                     });
@@ -2782,33 +2929,97 @@
                 const isCloudinary = fileUrl.includes('cloudinary.com') || fileUrl.includes('res.cloudinary.com');
                 
                 if (isCloudinary) {
-                    // Load Cloudinary file as blob then download
+                    // Download from Cloudinary as blob, then convert to TXT and download
                     console.log('📥 Downloading from Cloudinary as blob...');
-                    alert('⏳ Downloading, please wait...');
+                    alert('⏳ Downloading...');
                     
-                    fetch(fileUrl, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': '*/*'
-                        }
-                    })
+                    // Add fl_attachment transformation to Cloudinary URL
+                    let downloadUrl = fileUrl;
+                    if (fileUrl.includes('/upload/')) {
+                        downloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
+                    } else if (!fileUrl.includes('fl_attachment')) {
+                        const separator = fileUrl.includes('?') ? '&' : '?';
+                        downloadUrl = fileUrl + separator + 'fl_attachment';
+                    }
+                    
+                    console.log('Download URL:', downloadUrl);
+                    
+                    fetch(downloadUrl)
                         .then(response => {
                             if (!response.ok) throw new Error(`HTTP ${response.status}`);
                             return response.blob();
                         })
-                        .then(blob => {
-                            // Create blob URL
-                            const blobUrl = URL.createObjectURL(blob);
+                        .then(async blob => {
+                            console.log('✅ Blob received, size:', blob.size);
                             
-                            // Create download link
+                            // Get file type
+                            const extension = fileName ? fileName.split('.').pop().toLowerCase() : 'pdf';
+                            
+                            // If already TXT, download directly
+                            if (extension === 'txt') {
+                                const blobUrl = URL.createObjectURL(blob);
+                                const link = document.createElement('a');
+                                link.href = blobUrl;
+                                link.download = downloadName;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                                setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+                                
+                                console.log('✅ TXT download complete:', downloadName);
+                                alert('✅ Download started: ' + downloadName);
+                                return;
+                            }
+                            
+                            // Convert PDF to TXT
+                            if (extension === 'pdf') {
+                                console.log('Converting PDF to TXT...');
+                                alert('⏳ Converting PDF to TXT...');
+                                
+                                pdfjsLib.getDocument(blob).promise.then(async (pdf) => {
+                                    let textContent = '';
+                                    
+                                    // Extract text from all pages
+                                    for (let i = 1; i <= pdf.numPages; i++) {
+                                        const page = await pdf.getPage(i);
+                                        const text = await page.getTextContent();
+                                        text.items.forEach(item => {
+                                            textContent += item.str + ' ';
+                                        });
+                                        textContent += '\n\n';
+                                    }
+                                    
+                                    // Create TXT file
+                                    const txtName = downloadName.replace(/\.[^.]+$/, '.txt');
+                                    const txtBlob = new Blob([textContent], { type: 'text/plain' });
+                                    const blobUrl = URL.createObjectURL(txtBlob);
+                                    
+                                    // Download TXT
+                                    const link = document.createElement('a');
+                                    link.href = blobUrl;
+                                    link.download = txtName;
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                    setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+                                    
+                                    console.log('✅ PDF to TXT conversion complete:', txtName);
+                                    alert('✅ Download started: ' + txtName);
+                                }).catch(error => {
+                                    console.error('PDF conversion error:', error);
+                                    alert('❌ PDF conversion failed: ' + error.message);
+                                });
+                                return;
+                            }
+                            
+                            // For other files, just download as-is
+                            const blobUrl = URL.createObjectURL(blob);
                             const link = document.createElement('a');
                             link.href = blobUrl;
                             link.download = downloadName;
                             document.body.appendChild(link);
                             link.click();
                             document.body.removeChild(link);
-                            
-                            // Cleanup blob URL after a delay
                             setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
                             
                             console.log('✅ Download complete:', downloadName);
@@ -2816,10 +3027,7 @@
                         })
                         .catch(error => {
                             console.error('Blob download error:', error);
-                            // Fallback: Open in new tab for manual download
-                            console.log('Trying fallback: opening in new tab...');
-                            window.open(fileUrl, '_blank');
-                            alert('⚠️ Download opened in new tab. Right-click "Save As" if needed.');
+                            alert('❌ Download failed: ' + error.message);
                         });
                 } else {
                     // For Firebase Storage URLs
@@ -2848,24 +3056,153 @@
             }
         }
 
+        // View file in modal
+        function viewFile(fileUrl, fileName) {
+            const extension = fileName ? fileName.split('.').pop().toLowerCase() : '';
+            console.log('👁️ Viewing file:', fileName, 'Type:', extension);
+            
+            const modal = document.getElementById('fileViewerModal');
+            const viewerContent = document.getElementById('fileViewerContent');
+            
+            if (!modal) {
+                alert('❌ Viewer not available');
+                return;
+            }
+            
+            // Show loading
+            viewerContent.innerHTML = '<p style="color: #fff; text-align: center; padding: 40px;">⏳ Loading file...</p>';
+            modal.style.display = 'block';
+            
+            // Check if Cloudinary
+            const isCloudinary = fileUrl.includes('cloudinary.com') || fileUrl.includes('res.cloudinary.com');
+            
+            if (isCloudinary) {
+                // Add fl_attachment for Cloudinary
+                let downloadUrl = fileUrl;
+                if (fileUrl.includes('/upload/')) {
+                    downloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
+                } else if (!fileUrl.includes('fl_attachment')) {
+                    const separator = fileUrl.includes('?') ? '&' : '?';
+                    downloadUrl = fileUrl + separator + 'fl_attachment';
+                }
+                
+                fetch(downloadUrl)
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        displayFileContent(blob, extension, fileName);
+                    })
+                    .catch(error => {
+                        console.error('File load error:', error);
+                        viewerContent.innerHTML = '<p style="color: #ff6666; text-align: center; padding: 40px;">❌ Failed to load file: ' + error.message + '</p>';
+                    });
+            } else {
+                // Firebase Storage URL
+                fetch(fileUrl + '?alt=media')
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        displayFileContent(blob, extension, fileName);
+                    })
+                    .catch(error => {
+                        console.error('File load error:', error);
+                        viewerContent.innerHTML = '<p style="color: #ff6666; text-align: center; padding: 40px;">❌ Failed to load file: ' + error.message + '</p>';
+                    });
+            }
+        }
+        
+        function displayFileContent(blob, extension, fileName) {
+            const viewerContent = document.getElementById('fileViewerContent');
+            
+            if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+                // Display image
+                const url = URL.createObjectURL(blob);
+                viewerContent.innerHTML = `<img src="${url}" style="max-width: 100%; max-height: 80vh; margin: 20px auto; display: block;">`;
+            } else if (extension === 'pdf') {
+                // Display PDF
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    try {
+                        const pdf = await pdfjsLib.getDocument(e.target.result).promise;
+                        let htmlContent = '<div style="color: #fff; padding: 20px;">';
+                        
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const textContent = await page.getTextContent();
+                            htmlContent += `<h3 style="color: #ff8c00; margin-top: 20px;">Page ${i}</h3>`;
+                            htmlContent += '<p style="white-space: pre-wrap; font-family: monospace; line-height: 1.6;">';
+                            textContent.items.forEach(item => {
+                                htmlContent += item.str + ' ';
+                            });
+                            htmlContent += '</p>';
+                        }
+                        htmlContent += '</div>';
+                        viewerContent.innerHTML = htmlContent;
+                    } catch (error) {
+                        viewerContent.innerHTML = '<p style="color: #ff6666; text-align: center; padding: 40px;">❌ Failed to read PDF: ' + error.message + '</p>';
+                    }
+                };
+                reader.readAsArrayBuffer(blob);
+            } else if (extension === 'txt') {
+                // Display TXT
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const content = e.target.result;
+                    viewerContent.innerHTML = `<pre style="color: #fff; padding: 20px; white-space: pre-wrap; word-wrap: break-word; font-family: monospace; max-height: 80vh; overflow-y: auto;">${content}</pre>`;
+                };
+                reader.readAsText(blob);
+            } else {
+                // Default: show as text
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const content = e.target.result;
+                    viewerContent.innerHTML = `<pre style="color: #fff; padding: 20px; white-space: pre-wrap; word-wrap: break-word; font-family: monospace; max-height: 80vh; overflow-y: auto;">${content}</pre>`;
+                };
+                reader.readAsText(blob);
+            }
+        }
+        
+        function closeFileViewer() {
+            const modal = document.getElementById('fileViewerModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
         function submitFeedback(e) {
             e.preventDefault();
             
             const subject = document.getElementById('feedbackSubject').value;
             const message = document.getElementById('feedbackMessage').value;
 
-            // Save feedback to Firestore
-            db.collection('feedback').add({
+            const feedbackData = {
                 studentName: currentStudentData.name,
                 studentMatric: currentStudentData.matric,
                 studentEmail: currentStudentData.email,
                 subject: subject,
                 message: message,
-                submittedDate: firebase.firestore.FieldValue.serverTimestamp(),
                 read: false
+            };
+
+            // If offline, save to queue
+            if (!isOnline) {
+                saveOfflineData('feedback', feedbackData);
+                alert('⚠️ You are offline. Feedback will be submitted when back online.');
+                closeFeedbackModal();
+                return;
+            }
+
+            // Save feedback to Firestore
+            db.collection('feedback').add({
+                ...feedbackData,
+                submittedDate: firebase.firestore.FieldValue.serverTimestamp()
             }).then(docRef => {
                 console.log('Feedback submitted:', docRef.id);
-                alert('Thank you for your feedback!');
+                alert('✅ Thank you for your feedback!');
                 closeFeedbackModal();
             }).catch(error => {
                 console.error('Error submitting feedback:', error);
