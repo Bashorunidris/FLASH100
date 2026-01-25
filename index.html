@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -130,6 +131,7 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -245,6 +247,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -1250,6 +1253,7 @@
             0% {
                 transform: translateX(0);
             }
+
             100% {
                 transform: translateX(-300%);
             }
@@ -1261,6 +1265,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         // Set up PDF.js worker
         if (typeof pdfjsLib !== 'undefined') {
@@ -1269,24 +1274,24 @@
 
         // Offline Mode - Detect connection status
         let isOnline = navigator.onLine;
-        
+
         window.addEventListener('online', () => {
             isOnline = true;
             console.log('✅ Back online');
             showOfflineStatus();
             syncOfflineData();
         });
-        
+
         window.addEventListener('offline', () => {
             isOnline = false;
             console.log('📴 Offline mode');
             showOfflineStatus();
         });
-        
+
         function showOfflineStatus() {
             const indicator = document.getElementById('offlineIndicator');
             if (!indicator) return;
-            
+
             if (!isOnline) {
                 indicator.style.display = 'block';
                 indicator.innerHTML = '📴 Offline Mode - Data will sync when online';
@@ -1294,7 +1299,7 @@
                 indicator.style.display = 'none';
             }
         }
-        
+
         // Cache data to localStorage
         function cacheData(key, data) {
             try {
@@ -1307,7 +1312,7 @@
                 console.error('Cache error:', error);
             }
         }
-        
+
         // Get cached data
         function getCachedData(key) {
             try {
@@ -1320,7 +1325,7 @@
             }
             return null;
         }
-        
+
         // Save feedback/data when offline
         function saveOfflineData(type, data) {
             try {
@@ -1336,26 +1341,26 @@
                 console.error('Save offline error:', error);
             }
         }
-        
+
         // Sync offline data when back online
         function syncOfflineData() {
             try {
                 const offlineQueue = JSON.parse(localStorage.getItem('flash100_offlineQueue')) || [];
-                
+
                 if (offlineQueue.length === 0) {
                     console.log('✅ No offline data to sync');
                     return;
                 }
-                
+
                 console.log('🔄 Syncing', offlineQueue.length, 'offline items...');
-                
+
                 offlineQueue.forEach(item => {
                     if (item.type === 'feedback') {
                         // Re-submit feedback
                         submitOfflineFeedback(item.data);
                     }
                 });
-                
+
                 // Clear queue after sync attempt
                 localStorage.removeItem('flash100_offlineQueue');
                 console.log('✅ Sync complete');
@@ -1363,7 +1368,7 @@
                 console.error('Sync error:', error);
             }
         }
-        
+
         function submitOfflineFeedback(feedbackData) {
             db.collection('feedback').add({
                 studentName: feedbackData.studentName,
@@ -1383,10 +1388,12 @@
             });
         }
     </script>
-    </head>
+</head>
+
 <body>
     <!-- Offline Indicator -->
-    <div id="offlineIndicator" style="display: none; position: fixed; top: 0; left: 0; right: 0; background: #ff6b6b; color: #fff; padding: 15px 20px; text-align: center; font-weight: 600; z-index: 9999;">
+    <div id="offlineIndicator"
+        style="display: none; position: fixed; top: 0; left: 0; right: 0; background: #ff6b6b; color: #fff; padding: 15px 20px; text-align: center; font-weight: 600; z-index: 9999;">
         📴 Offline Mode - Data will sync when online
     </div>
 
@@ -1508,16 +1515,22 @@
             <div class="users-section" style="margin-top: 30px;">
                 <h3>💬 Send Personal Message to Student</h3>
                 <div style="margin-bottom: 20px;">
-                    <label style="color: rgba(255, 255, 255, 0.8); display: block; margin-bottom: 10px;">Select Student:</label>
-                    <select id="studentSelector" style="width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em; margin-bottom: 15px;">
+                    <label style="color: rgba(255, 255, 255, 0.8); display: block; margin-bottom: 10px;">Select
+                        Student:</label>
+                    <select id="studentSelector"
+                        style="width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em; margin-bottom: 15px;">
                         <option value="">-- Select a student --</option>
                     </select>
                 </div>
                 <div style="margin-bottom: 20px;">
-                    <label style="color: rgba(255, 255, 255, 0.8); display: block; margin-bottom: 10px;">Message:</label>
-                    <textarea id="adminMessage" placeholder="Type your personal message..." style="width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em; min-height: 100px; margin-bottom: 15px;"></textarea>
+                    <label
+                        style="color: rgba(255, 255, 255, 0.8); display: block; margin-bottom: 10px;">Message:</label>
+                    <textarea id="adminMessage" placeholder="Type your personal message..."
+                        style="width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em; min-height: 100px; margin-bottom: 15px;"></textarea>
                 </div>
-                <button onclick="sendPersonalMessage()" style="padding: 12px 30px; background: #ff8c00; color: #fff; border: none; cursor: pointer; font-weight: 600; border-radius: 4px; font-size: 1em;">Send Message</button>
+                <button onclick="sendPersonalMessage()"
+                    style="padding: 12px 30px; background: #ff8c00; color: #fff; border: none; cursor: pointer; font-weight: 600; border-radius: 4px; font-size: 1em;">Send
+                    Message</button>
             </div>
 
             <div class="users-section" style="margin-top: 30px;">
@@ -1536,52 +1549,84 @@
         </div>
 
         <div class="dashboard-content">
-            <h3 style="color: #ff8c00; font-size: 1.8em; margin-bottom: 10px;">Welcome, <span id="studentName"></span>!</h3>
-            <p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 30px;">Matric: <span id="studentMatric"></span></p>
+            <h3 style="color: #ff8c00; font-size: 1.8em; margin-bottom: 10px;">Welcome, <span id="studentName"></span>!
+            </h3>
+            <p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 30px;">Matric: <span id="studentMatric"></span>
+            </p>
+
+            <!-- Convert to PDF Button -->
+            <div style="margin-bottom: 30px;">
+                <button onclick="window.location.href='pdf.html'" style="padding: 15px 30px; background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%); color: #fff; border: none; cursor: pointer; border-radius: 6px; font-weight: 600; font-size: 1.05em; transition: all 0.3s; box-shadow: 0 4px 15px rgba(81, 207, 102, 0.2);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(81, 207, 102, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(81, 207, 102, 0.2)'">
+                    📝 Convert Text to PDF
+                </button>
+            </div>
 
             <!-- Ads Banner Carousel -->
             <div style="position: relative; overflow: hidden; border-radius: 8px; margin-bottom: 30px;">
                 <div style="display: flex; animation: scroll 15s infinite linear; gap: 20px;">
-                    <div style="min-width: 100%; background: linear-gradient(135deg, #ff8c00 0%, #e67700 100%); padding: 40px; text-align: center; border-radius: 8px;">
+                    <div
+                        style="min-width: 100%; background: linear-gradient(135deg, #ff8c00 0%, #e67700 100%); padding: 40px; text-align: center; border-radius: 8px;">
                         <h2 style="color: #fff; margin-bottom: 10px;">📚 Study Materials Available</h2>
-                        <p style="color: rgba(255, 255, 255, 0.9);">Access thousands of lecture notes, past questions, and study guides</p>
+                        <p style="color: rgba(255, 255, 255, 0.9);">Access thousands of lecture notes, past questions,
+                            and study guides</p>
                     </div>
-                    <div style="min-width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center; border-radius: 8px;">
+                    <div
+                        style="min-width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center; border-radius: 8px;">
                         <h2 style="color: #fff; margin-bottom: 10px;">🎓 Improve Your Grades</h2>
-                        <p style="color: rgba(255, 255, 255, 0.9);">Get access to comprehensive course materials and resources</p>
+                        <p style="color: rgba(255, 255, 255, 0.9);">Get access to comprehensive course materials and
+                            resources</p>
                     </div>
-                    <div style="min-width: 100%; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 40px; text-align: center; border-radius: 8px;">
+                    <div
+                        style="min-width: 100%; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 40px; text-align: center; border-radius: 8px;">
                         <h2 style="color: #fff; margin-bottom: 10px;">✨ Excel in Your Courses</h2>
-                        <p style="color: rgba(255, 255, 255, 0.9);">Download resources uploaded by your admin and instructors</p>
+                        <p style="color: rgba(255, 255, 255, 0.9);">Download resources uploaded by your admin and
+                            instructors</p>
                     </div>
                 </div>
             </div>
 
             <div style="background: rgba(255, 140, 0, 0.05); padding: 30px; margin-bottom: 30px;">
                 <h3 style="color: #ff8c00; margin-bottom: 20px; font-size: 1.5em;">📖 Available Courses & Resources</h3>
-                
+
                 <!-- Department Filter Tabs -->
-                <div style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; border-bottom: 2px solid rgba(255, 140, 0, 0.2); padding-bottom: 15px; overflow-x: auto;">
-                    <button class="dept-tab active" onclick="filterByDepartment('')" style="padding: 10px 20px; background: #ff8c00; border: none; color: #1a1a2e; cursor: pointer; font-weight: 600; border-radius: 4px; white-space: nowrap;">All</button>
-                    <button class="dept-tab" onclick="filterByDepartment('history')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">HIS</button>
-                    <button class="dept-tab" onclick="filterByDepartment('iss')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">ISS</button>
-                    <button class="dept-tab" onclick="filterByDepartment('french')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">French</button>
-                    <button class="dept-tab" onclick="filterByDepartment('portuguese')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Portuguese</button>
-                    <button class="dept-tab" onclick="filterByDepartment('linguistics')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Linguistics</button>
-                    <button class="dept-tab" onclick="filterByDepartment('philosophy')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Philosophy</button>
-                    <button class="dept-tab" onclick="filterByDepartment('theatre-art')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Theatre Art</button>
-                    <button class="dept-tab" onclick="filterByDepartment('gns')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">GNS</button>
-                    <button class="dept-tab" onclick="filterByDepartment('english')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">English</button>
-                    <button class="dept-tab" onclick="filterByDepartment('peace-studies')" style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Peace & Religious Studies</button>
+                <div
+                    style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; border-bottom: 2px solid rgba(255, 140, 0, 0.2); padding-bottom: 15px; overflow-x: auto;">
+                    <button class="dept-tab active" onclick="filterByDepartment('')"
+                        style="padding: 10px 20px; background: #ff8c00; border: none; color: #1a1a2e; cursor: pointer; font-weight: 600; border-radius: 4px; white-space: nowrap;">All</button>
+                    <button class="dept-tab" onclick="filterByDepartment('history')"
+                        style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">HIS</button>
+                    <button class="dept-tab" onclick="filterByDepartment('iss')"
+                        style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">ISS</button>
+                    <button class="dept-tab" onclick="filterByDepartment('french')"
+                        style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">French</button>
+                    <button class="dept-tab" onclick="filterByDepartment('portuguese')"
+                        style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Portuguese</button>
+                    <button class="dept-tab" onclick="filterByDepartment('linguistics')"
+                        style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Linguistics</button>
+                    <button class="dept-tab" onclick="filterByDepartment('philosophy')"
+                        style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Philosophy</button>
+                    <button class="dept-tab" onclick="filterByDepartment('theatre-art')"
+                        style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Theatre
+                        Art</button>
+                    <button class="dept-tab" onclick="filterByDepartment('gns')"
+                        style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">GNS</button>
+                    <button class="dept-tab" onclick="filterByDepartment('english')"
+                        style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">English</button>
+                    <button class="dept-tab" onclick="filterByDepartment('peace-studies')"
+                        style="padding: 10px 20px; background: rgba(255, 140, 0, 0.2); border: 1px solid rgba(255, 140, 0, 0.5); color: #fff; cursor: pointer; border-radius: 4px; white-space: nowrap;">Peace
+                        & Religious Studies</button>
                 </div>
 
             </div>
 
             <!-- Notifications Section -->
-            <div style="background: rgba(255, 140, 0, 0.05); padding: 30px; border-left: 4px solid #ff8c00; margin-bottom: 30px;">
+            <div
+                style="background: rgba(255, 140, 0, 0.05); padding: 30px; border-left: 4px solid #ff8c00; margin-bottom: 30px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 style="color: #ff8c00; font-size: 1.5em; margin: 0;">📢 General Announcements</h3>
-                    <button onclick="openFeedbackModal()" style="padding: 10px 20px; background: #ff8c00; color: #1a1a2e; border: none; cursor: pointer; font-weight: 600; border-radius: 4px;">💬 Send Feedback</button>
+                    <button onclick="openFeedbackModal()"
+                        style="padding: 10px 20px; background: #ff8c00; color: #1a1a2e; border: none; cursor: pointer; font-weight: 600; border-radius: 4px;">💬
+                        Send Feedback</button>
                 </div>
                 <div id="studentNotifications" style="display: grid; gap: 15px;">
                     <p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">Loading announcements...</p>
@@ -1605,12 +1650,14 @@
                 <h3 id="deptModalTitle">📚 Department Resources</h3>
                 <button class="close-btn" onclick="closeDepartmentModal()">&times;</button>
             </div>
-            
+
             <div class="modal-body">
                 <!-- Resource Tabs -->
                 <div class="resource-tabs">
-                    <button class="resource-tab active" onclick="switchResourceType('past-questions')">📝 Past Questions</button>
-                    <button class="resource-tab" onclick="switchResourceType('other')">📖 Departmental Resources</button>
+                    <button class="resource-tab active" onclick="switchResourceType('past-questions')">📝 Past
+                        Questions</button>
+                    <button class="resource-tab" onclick="switchResourceType('other')">📖 Departmental
+                        Resources</button>
                 </div>
 
                 <!-- Past Questions Tab -->
@@ -1632,7 +1679,8 @@
 
     <!-- Feedback Modal -->
     <!-- File Viewer Modal -->
-    <div class="modal" id="fileViewerModal" style="display: none; background: rgba(0, 0, 0, 0.95); z-index: 20000; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto;">
+    <div class="modal" id="fileViewerModal"
+        style="display: none; background: rgba(0, 0, 0, 0.95); z-index: 20000; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto;">
         <div class="modal-content" style="min-height: 100vh; overflow-y: auto; background: #1a1a2e;">
             <div class="modal-header">
                 <h3 style="flex: 1;">📄 File Viewer</h3>
@@ -1644,9 +1692,6 @@
         </div>
     </div>
 
-    <!-- File Converter Modal -->
-
-
     <div class="modal" id="feedbackModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1656,11 +1701,14 @@
             <form class="notification-form" onsubmit="submitFeedback(event)">
                 <div class="form-group">
                     <label>Feedback Subject</label>
-                    <input type="text" id="feedbackSubject" placeholder="What is your feedback about?" required style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em;">
+                    <input type="text" id="feedbackSubject" placeholder="What is your feedback about?" required
+                        style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em;">
                 </div>
                 <div class="form-group">
                     <label>Feedback Message</label>
-                    <textarea id="feedbackMessage" placeholder="Share your feedback, suggestions, or concerns..." required style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em; min-height: 150px;"></textarea>
+                    <textarea id="feedbackMessage" placeholder="Share your feedback, suggestions, or concerns..."
+                        required
+                        style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em; min-height: 150px;"></textarea>
                 </div>
                 <button type="submit" class="modal-btn">Submit Feedback</button>
             </form>
@@ -1673,7 +1721,7 @@
                 <h3>📚 Resource Page</h3>
                 <button class="close-btn" onclick="closeUploadModal()">&times;</button>
             </div>
-            
+
             <div class="modal-body">
                 <div class="resource-tabs">
                     <button class="resource-tab active" onclick="switchResourceTab('upload')">Upload</button>
@@ -1683,7 +1731,8 @@
                 <div id="uploadTab" class="form-content active">
                     <div class="form-group">
                         <label>Select Department</label>
-                        <select id="fileDepartment" style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em;">
+                        <select id="fileDepartment"
+                            style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em;">
                             <option value="">-- Select Department --</option>
                             <option value="history">HIS - History and International Studies</option>
                             <option value="iss">ISS - International Studies</option>
@@ -1699,15 +1748,18 @@
                     </div>
                     <div class="form-group">
                         <label>Course Name</label>
-                        <input type="text" id="fileTitle" placeholder="Enter course name" style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em;">
+                        <input type="text" id="fileTitle" placeholder="Enter course name"
+                            style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em;">
                     </div>
                     <div class="form-group">
                         <label>Course Description</label>
-                        <textarea id="fileDescription" placeholder="Enter course description" style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em; min-height: 100px; resize: vertical;"></textarea>
+                        <textarea id="fileDescription" placeholder="Enter course description"
+                            style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em; min-height: 100px; resize: vertical;"></textarea>
                     </div>
                     <div class="form-group">
                         <label>Form Type</label>
-                        <select id="fileCategory" style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em;">
+                        <select id="fileCategory"
+                            style="width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 140, 0, 0.3); color: #fff; font-size: 1em;">
                             <option value="">-- Select Form Type --</option>
                             <option value="past-questions">Past Questions</option>
                             <option value="lecture-notes">Lecture Notes</option>
@@ -1728,7 +1780,9 @@
 
                 <div id="resourcesTab" class="form-content">
                     <div id="resourcesList">
-                        <p style="color: rgba(255, 255, 255, 0.5); padding: 40px; text-align: center; font-size: 1.2em;">No resources uploaded yet</p>
+                        <p
+                            style="color: rgba(255, 255, 255, 0.5); padding: 40px; text-align: center; font-size: 1.2em;">
+                            No resources uploaded yet</p>
                     </div>
                 </div>
             </div>
@@ -1781,14 +1835,14 @@
         const ADMIN_EMAIL = 'toluwanioloyede27@gmail.com';
         // Password changed from redacted placeholder to actual credentials
         const ADMIN_PASSWORD = '1234ABCD';
-        
+
         function switchTab(tab) {
             const tabs = document.querySelectorAll('.tab');
             const forms = document.querySelectorAll('.form-content');
-            
+
             tabs.forEach(t => t.classList.remove('active'));
             forms.forEach(f => f.classList.remove('active'));
-            
+
             if (tab === 'login') {
                 tabs[0].classList.add('active');
                 document.getElementById('loginForm').classList.add('active');
@@ -1804,7 +1858,7 @@
             const msg = document.getElementById('message');
             msg.textContent = text;
             msg.classList.add('show');
-            
+
             setTimeout(() => {
                 hideMessage();
             }, 4000);
@@ -1817,7 +1871,7 @@
 
         function handleSignup(e) {
             e.preventDefault();
-            
+
             const matric = document.getElementById('signupMatric').value;
             const name = document.getElementById('signupName').value;
             const email = document.getElementById('signupEmail').value;
@@ -1849,7 +1903,7 @@
                         registeredDate: firebase.firestore.FieldValue.serverTimestamp()
                     }).then(() => {
                         showMessage('Account created successfully! You can now login.');
-                        
+
                         setTimeout(() => {
                             switchTab('login');
                             document.getElementById('loginMatric').value = matric;
@@ -1878,7 +1932,7 @@
 
         function handleLogin(e) {
             e.preventDefault();
-            
+
             const identifier = document.getElementById('loginMatric').value;
             const password = document.getElementById('loginPassword').value;
 
@@ -1891,7 +1945,7 @@
             // Check for admin login
             if (identifier === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
                 showMessage('Admin login successful!', 'success');
-                
+
                 setTimeout(() => {
                     showAdminDashboard();
                     e.target.reset();
@@ -1920,7 +1974,7 @@
                     auth.signInWithEmailAndPassword(email, password).then(userCredential => {
                         console.log('Login successful');
                         showMessage(`Welcome back, ${studentData.name}!`, 'success');
-                        
+
                         setTimeout(() => {
                             showStudentDashboard(studentData, matric);
                             e.target.reset();
@@ -1969,10 +2023,10 @@
             document.getElementById('studentDashboard').classList.add('active');
             document.getElementById('studentName').textContent = user.name;
             document.getElementById('studentMatric').textContent = matric;
-            
+
             // Store student data for feedback and messaging
             currentStudentData = { ...user, matric: matric };
-            
+
             loadStudentCourses();
             loadStudentNotifications();
             loadStudentMessages();
@@ -1981,7 +2035,7 @@
         function loadStudentCourses() {
             const coursesList = document.getElementById('studentCoursesList');
             coursesList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">Loading courses...</p>';
-            
+
             // Get all courses without orderBy to avoid index requirement
             db.collection('courses').get().then(snapshot => {
                 if (snapshot.empty) {
@@ -1989,13 +2043,13 @@
                     console.log('Courses collection is empty');
                 } else {
                     console.log('Found ' + snapshot.size + ' courses');
-                    
+
                     // Sort in JavaScript instead
                     const courses = [];
                     snapshot.forEach(doc => {
                         courses.push({ id: doc.id, data: doc.data() });
                     });
-                    
+
                     // Sort by uploadedDate, newest first
                     courses.sort((a, b) => {
                         const dateA = a.data.uploadedDate ? a.data.uploadedDate.toDate() : new Date(0);
@@ -2018,7 +2072,7 @@
                                 <strong>File:</strong> ${course.name} | <strong>Size:</strong> ${course.size}<br>
                                 <strong>Posted:</strong> ${uploadedDate}
                             </p>
-                            ${course.firebaseStorageUrl ? `<button onclick="viewFile('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none; margin-right: 10px;">👁️ View</button><button onclick="downloadResource('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download</button>` : course.cloudinaryUrl ? `<button onclick="viewFile('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none; margin-right: 10px;">👁️ View</button><button onclick="downloadResource('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download</button>` : ''}
+                            ${course.firebaseStorageUrl ? `<button onclick="viewFile('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none; margin-right: 10px;">👁️ View</button><button onclick="downloadFile('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download</button>` : course.cloudinaryUrl ? `<button onclick="viewFile('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none; margin-right: 10px;">👁️ View</button><button onclick="downloadFile('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download</button>` : ''}
                         `;
                         coursesList.appendChild(courseCard);
                     });
@@ -2034,7 +2088,7 @@
         function loadStudentNotifications() {
             const notificationsList = document.getElementById('studentNotifications');
             notificationsList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">Loading announcements...</p>';
-            
+
             // Get all notifications from Firestore
             db.collection('notifications').get().then(snapshot => {
                 if (snapshot.empty) {
@@ -2042,13 +2096,13 @@
                     console.log('No notifications');
                 } else {
                     console.log('Found ' + snapshot.size + ' notifications');
-                    
+
                     // Sort notifications by date, newest first
                     const notifications = [];
                     snapshot.forEach(doc => {
                         notifications.push({ id: doc.id, data: doc.data() });
                     });
-                    
+
                     notifications.sort((a, b) => {
                         const dateA = a.data.sentDate ? a.data.sentDate.toDate() : new Date(0);
                         const dateB = b.data.sentDate ? b.data.sentDate.toDate() : new Date(0);
@@ -2080,7 +2134,7 @@
             const deptName = getDepartmentName(department);
             sessionStorage.setItem('selectedDepartment', department);
             sessionStorage.setItem('selectedDeptName', deptName);
-            
+
             // Navigate to full page view
             openDepartmentFullPage(department);
         }
@@ -2135,72 +2189,72 @@
                 display: flex;
                 flex-direction: column;
             `;
-            
+
             const deptName = getDepartmentName(department);
             const deptColor = getDepartmentColor(department);
-            
+
             // Create header
             const header = document.createElement('div');
             header.style.cssText = `background: ${deptColor}; padding: 20px 40px; position: sticky; top: 0;`;
-            
+
             // Header title and button row
             const topRow = document.createElement('div');
             topRow.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;';
             topRow.innerHTML = `<h2 style="font-size: 1.8em; margin: 0;">${deptName} Resources</h2>`;
-            
+
             // Create back button
             const backBtn = document.createElement('button');
             backBtn.innerHTML = '← Back';
             backBtn.style.cssText = `padding: 10px 25px; background: #1a1a2e; color: #fff; border: none; cursor: pointer; font-size: 1em; font-weight: 600; border-radius: 4px; transition: background 0.3s;`;
-            backBtn.onmouseover = function() { this.style.background = 'rgba(26, 26, 46, 0.8)'; };
-            backBtn.onmouseout = function() { this.style.background = '#1a1a2e'; };
-            backBtn.onclick = function() {
+            backBtn.onmouseover = function () { this.style.background = 'rgba(26, 26, 46, 0.8)'; };
+            backBtn.onmouseout = function () { this.style.background = '#1a1a2e'; };
+            backBtn.onclick = function () {
                 document.getElementById('deptModal').remove();
             };
-            
+
             topRow.appendChild(backBtn);
             header.appendChild(topRow);
-            
+
             // Search bar row
             const searchRow = document.createElement('div');
             searchRow.style.cssText = 'display: flex; gap: 10px; align-items: center;';
-            
+
             const searchInput = document.createElement('input');
             searchInput.type = 'text';
             searchInput.id = 'deptSearchInput';
             searchInput.placeholder = 'Search resources by title or description...';
             searchInput.style.cssText = 'flex: 1; padding: 12px 15px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; font-size: 1em; border-radius: 4px; outline: none;';
-            searchInput.onfocus = function() { this.style.borderColor = '#fff'; };
-            searchInput.onblur = function() { this.style.borderColor = 'rgba(255, 255, 255, 0.3)'; };
-            searchInput.oninput = function() {
+            searchInput.onfocus = function () { this.style.borderColor = '#fff'; };
+            searchInput.onblur = function () { this.style.borderColor = 'rgba(255, 255, 255, 0.3)'; };
+            searchInput.oninput = function () {
                 filterDepartmentResources(this.value, department);
             };
-            
+
             const clearBtn = document.createElement('button');
             clearBtn.innerHTML = '✕';
             clearBtn.style.cssText = 'padding: 10px 15px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; cursor: pointer; border-radius: 4px; font-size: 1.2em; transition: background 0.3s;';
-            clearBtn.onmouseover = function() { this.style.background = 'rgba(0, 0, 0, 0.4)'; };
-            clearBtn.onmouseout = function() { this.style.background = 'rgba(0, 0, 0, 0.2)'; };
-            clearBtn.onclick = function() {
+            clearBtn.onmouseover = function () { this.style.background = 'rgba(0, 0, 0, 0.4)'; };
+            clearBtn.onmouseout = function () { this.style.background = 'rgba(0, 0, 0, 0.2)'; };
+            clearBtn.onclick = function () {
                 searchInput.value = '';
                 filterDepartmentResources('', department);
             };
-            
+
             searchRow.appendChild(searchInput);
             searchRow.appendChild(clearBtn);
             header.appendChild(searchRow);
-            
+
             modal.appendChild(header);
-            
+
             // Create content area
             const contentDiv = document.createElement('div');
             contentDiv.id = 'deptModalContent';
             contentDiv.style.cssText = 'flex: 1; padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%;';
             contentDiv.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); text-align: center; padding: 40px;">Loading resources...</p>';
             modal.appendChild(contentDiv);
-            
+
             document.body.appendChild(modal);
-            
+
             // Load department resources
             loadDepartmentResources(department, deptColor);
         }
@@ -2209,13 +2263,13 @@
             const contentDiv = document.getElementById('deptModalContent');
             const color = deptColor || getDepartmentColor(department);
             contentDiv.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); text-align: center; padding: 40px;">Loading resources...</p>';
-            
+
             let query = db.collection('courses');
-            
+
             if (department) {
                 query = query.where('department', '==', department);
             }
-            
+
             query.get().then(snapshot => {
                 if (snapshot.empty) {
                     contentDiv.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); text-align: center; padding: 40px; font-size: 1.1em;">No resources found for this department</p>';
@@ -2230,16 +2284,16 @@
                         const dateB = b.data.uploadedDate ? b.data.uploadedDate.toDate() : new Date(0);
                         return dateB - dateA;
                     });
-                    
+
                     contentDiv.innerHTML = '';
                     const coursesGrid = document.createElement('div');
                     coursesGrid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px;';
-                    
+
                     // Define these outside the loop so they can be used later
                     const rgbaColor = hexToRgba(color, 0.05);
                     const rgbaColorBorder = hexToRgba(color, 0.3);
                     const rgbaColorLight = hexToRgba(color, 0.2);
-                    
+
                     courses.forEach(doc => {
                         const course = doc.data;
                         const uploadedDate = course.uploadedDate ? new Date(course.uploadedDate.toDate()).toLocaleString() : 'N/A';
@@ -2256,17 +2310,17 @@
                             </p>
                             ${course.firebaseStorageUrl ? `<div style="display: flex; gap: 10px;">
                                <button onclick="viewFile('${course.firebaseStorageUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">👁️ View</button>
-                                <button onclick="downloadResource('${course.firebaseStorageUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download</button>
+                                <button onclick="downloadFile('${course.firebaseStorageUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download</button>
                             </div>` : course.cloudinaryUrl ? `<div style="display: flex; gap: 10px;">
                                 <button onclick="viewFile('${course.cloudinaryUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">👁️ View</button>
-                                <button onclick="downloadResource('${course.cloudinaryUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download</button>
+                                <button onclick="downloadFile('${course.cloudinaryUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download</button>
                             </div>` : ''}
                         `;
                         coursesGrid.appendChild(courseCard);
                     });
-                    
+
                     contentDiv.appendChild(coursesGrid);
-                    
+
                     // Add footer with count
                     const footer = document.createElement('div');
                     footer.style.cssText = `text-align: center; padding: 30px 0; border-top: 1px solid ${rgbaColorLight}; margin-top: 30px;`;
@@ -2297,21 +2351,21 @@
             const contentDiv = document.getElementById('deptModalContent');
             const color = getDepartmentColor(department);
             const searchLower = searchTerm.toLowerCase().trim();
-            
+
             // If search is empty, reload all resources
             if (!searchLower) {
                 loadDepartmentResources(department, color);
                 return;
             }
-            
+
             contentDiv.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); text-align: center; padding: 40px;">Searching...</p>';
-            
+
             let query = db.collection('courses');
-            
+
             if (department) {
                 query = query.where('department', '==', department);
             }
-            
+
             query.get().then(snapshot => {
                 if (snapshot.empty) {
                     contentDiv.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); text-align: center; padding: 40px; font-size: 1.1em;">No resources found</p>';
@@ -2321,40 +2375,40 @@
                     snapshot.forEach(doc => {
                         courses.push({ id: doc.id, data: doc.data() });
                     });
-                    
+
                     // Sort courses
                     courses.sort((a, b) => {
                         const dateA = a.data.uploadedDate ? a.data.uploadedDate.toDate() : new Date(0);
                         const dateB = b.data.uploadedDate ? b.data.uploadedDate.toDate() : new Date(0);
                         return dateB - dateA;
                     });
-                    
+
                     // Filter courses by search term
                     const filteredCourses = courses.filter(doc => {
                         const course = doc.data;
                         const title = (course.title || '').toLowerCase();
                         const description = (course.description || '').toLowerCase();
                         const category = (course.category || '').toLowerCase();
-                        
-                        return title.includes(searchLower) || 
-                               description.includes(searchLower) || 
-                               category.includes(searchLower);
+
+                        return title.includes(searchLower) ||
+                            description.includes(searchLower) ||
+                            category.includes(searchLower);
                     });
-                    
+
                     // Display results
                     contentDiv.innerHTML = '';
-                    
+
                     if (filteredCourses.length === 0) {
                         contentDiv.innerHTML = `<p style="color: rgba(255, 255, 255, 0.5); text-align: center; padding: 40px; font-size: 1.1em;">No resources match "<strong>${searchTerm}</strong>"</p>`;
                     } else {
                         const coursesGrid = document.createElement('div');
                         coursesGrid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px;';
-                        
+
                         // Define these outside the loop so they can be used later
                         const rgbaColor = hexToRgba(color, 0.05);
                         const rgbaColorBorder = hexToRgba(color, 0.3);
                         const rgbaColorLight = hexToRgba(color, 0.2);
-                        
+
                         filteredCourses.forEach(doc => {
                             const course = doc.data;
                             const uploadedDate = course.uploadedDate ? new Date(course.uploadedDate.toDate()).toLocaleString() : 'N/A';
@@ -2369,13 +2423,13 @@
                                     <strong>Size:</strong> ${course.size}<br>
                                     <strong>Posted:</strong> ${uploadedDate}
                                 </p>
-                                ${course.firebaseStorageUrl ? `<button onclick="downloadWithWatermark('${course.firebaseStorageUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; width: 100%; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download Resource</button>` : course.cloudinaryUrl ? `<button onclick="downloadWithWatermark('${course.cloudinaryUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; width: 100%; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download Resource</button>` : ''}
+                                ${course.firebaseStorageUrl ? `<button onclick="downloadFile('${course.firebaseStorageUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; width: 100%; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download Resource</button>` : course.cloudinaryUrl ? `<button onclick="downloadFile('${course.cloudinaryUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; width: 100%; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download Resource</button>` : ''}
                             `;
                             coursesGrid.appendChild(courseCard);
                         });
-                        
+
                         contentDiv.appendChild(coursesGrid);
-                        
+
                         // Add footer with count
                         const footer = document.createElement('div');
                         footer.style.cssText = `text-align: center; padding: 30px 0; border-top: 1px solid ${rgbaColorLight}; margin-top: 30px;`;
@@ -2400,7 +2454,7 @@
                 document.getElementById('newThisWeek').textContent = userCount;
 
                 const userList = document.getElementById('userList');
-                
+
                 if (userCount === 0) {
                     userList.innerHTML = '<li style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No users registered yet</li>';
                 } else {
@@ -2418,7 +2472,7 @@
                         userList.appendChild(li);
                     });
                 }
-                
+
                 // Also populate the student selector for messaging
                 const selector = document.getElementById('studentSelector');
                 selector.innerHTML = '<option value="">-- Select a student --</option>';
@@ -2429,7 +2483,7 @@
                     option.textContent = `${user.name} (${user.matric})`;
                     selector.appendChild(option);
                 });
-                
+
                 // Load feedback
                 loadAdminFeedback();
             }).catch(error => {
@@ -2517,9 +2571,9 @@
             const tabs = document.querySelectorAll('.resource-tab');
             const uploadTab = document.getElementById('uploadTab');
             const resourcesTab = document.getElementById('resourcesTab');
-            
+
             tabs.forEach(t => t.classList.remove('active'));
-            
+
             if (tab === 'upload') {
                 tabs[0].classList.add('active');
                 uploadTab.classList.add('active');
@@ -2562,7 +2616,7 @@
 
             document.getElementById('deptModalTitle').textContent = '📚 ' + deptNames[department];
             document.getElementById('departmentModal').classList.add('active');
-            
+
             // Load past questions
             loadResourcesByType('past-questions');
         }
@@ -2577,7 +2631,7 @@
                 tab.classList.remove('active');
                 if (tab.textContent.includes('Past')) tab.classList.remove('active');
             });
-            
+
             // Set active tab
             const tabs = document.querySelectorAll('.resource-tabs .resource-tab');
             if (type === 'past-questions') {
@@ -2589,20 +2643,20 @@
                 document.getElementById('pastQuestionsTab').classList.remove('active');
                 document.getElementById('otherResourcesTab').classList.add('active');
             }
-            
+
             loadResourcesByType(type);
         }
 
         function loadResourcesByType(type) {
             let query = db.collection('courses');
-            
+
             if (currentDepartmentFilter) {
                 query = query.where('department', '==', currentDepartmentFilter);
             }
 
             query.get().then(snapshot => {
                 const resourcesList = type === 'past-questions' ? document.getElementById('pastQuestionsList') : document.getElementById('otherResourcesList');
-                
+
                 if (snapshot.empty) {
                     resourcesList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No resources found</p>';
                     return;
@@ -2646,7 +2700,7 @@
                             <strong>File:</strong> ${resource.name} | <strong>Size:</strong> ${resource.size}<br>
                             <strong>Posted:</strong> ${uploadedDate}
                         </p>
-                        ${resource.firebaseStorageUrl ? `<button onclick="downloadWithWatermark('${resource.firebaseStorageUrl}', '${resource.name}')" style="display: inline-block; padding: 12px 25px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px;">⬇️ Download</button>` : resource.cloudinaryUrl ? `<button onclick="downloadWithWatermark('${resource.cloudinaryUrl}', '${resource.name}')" style="display: inline-block; padding: 12px 25px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px;">⬇️ Download</button>` : ''}
+                        ${resource.firebaseStorageUrl ? `<button onclick="downloadFile('${resource.firebaseStorageUrl}', '${resource.name}')" style="display: inline-block; padding: 12px 25px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px;">⬇️ Download</button>` : resource.cloudinaryUrl ? `<button onclick="downloadFile('${resource.cloudinaryUrl}', '${resource.name}')" style="display: inline-block; padding: 12px 25px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px;">⬇️ Download</button>` : ''}
                     `;
                     resourcesList.appendChild(resourceCard);
                 });
@@ -2702,74 +2756,74 @@
             btn.disabled = true;
 
             // Step 1: Upload to Cloudinary
-             const formData = new FormData();
-             formData.append('file', selectedFile);
-             formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-             
-             const originalFileName = selectedFile.name;
-             const originalExtension = originalFileName.split('.').pop().toLowerCase();
-             const fileSize = (selectedFile.size / 1024 / 1024).toFixed(2) + ' MB';
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
-             fetch(CLOUDINARY_API_URL, {
-                 method: 'POST',
-                 body: formData
-             })
-             .then(response => response.json())
-             .then(async (data) => {
-                 if (data.error) {
-                     throw new Error(data.error.message);
-                 }
-                 
-                 console.log('File uploaded to Cloudinary:', data.secure_url);
-                 
-                 const cloudinaryUrl = data.url || data.secure_url;
-                 
-                 // Step 2: Save to Firestore with original file info
-                 // Note: PDF to TXT conversion happens on-demand when user downloads
-                 const fileData = {
-                     name: originalFileName,
-                     title: title,
-                     department: department,
-                     size: fileSize,
-                     type: selectedFile.type || 'Unknown',
-                     description: description,
-                     category: category,
-                     cloudinaryUrl: cloudinaryUrl,
-                     originalFormat: originalExtension,
-                     originalSize: fileSize,
-                     uploadedDate: firebase.firestore.FieldValue.serverTimestamp()
-                 };
+            const originalFileName = selectedFile.name;
+            const originalExtension = originalFileName.split('.').pop().toLowerCase();
+            const fileSize = (selectedFile.size / 1024 / 1024).toFixed(2) + ' MB';
 
-                 // Save to Firestore
-                 return db.collection('courses').add(fileData);
-             })
-            .then(docRef => {
-                console.log('Course saved to Firestore:', docRef.id);
-                alert(`Course "${title}" posted successfully!`);
-                
-                // Clear form
-                document.getElementById('fileDepartment').value = '';
-                document.getElementById('fileInput').value = '';
-                document.getElementById('fileInfo').textContent = '';
-                document.getElementById('fileTitle').value = '';
-                document.getElementById('fileDescription').value = '';
-                document.getElementById('fileCategory').value = '';
-                selectedFile = null;
-                
-                // Reset button
-                btn.textContent = originalText;
-                btn.disabled = false;
-                
-                // Switch to resources tab to show uploaded file
-                switchResourceTab('resources');
-                updateFilesList();
+            fetch(CLOUDINARY_API_URL, {
+                method: 'POST',
+                body: formData
             })
-            .catch(error => {
-                console.error('Upload error:', error);
-                alert('Error uploading file: ' + error.message);
-                btn.textContent = originalText;
-                btn.disabled = false;
-            });
+                .then(response => response.json())
+                .then(async (data) => {
+                    if (data.error) {
+                        throw new Error(data.error.message);
+                    }
+
+                    console.log('File uploaded to Cloudinary:', data.secure_url);
+
+                    const cloudinaryUrl = data.url || data.secure_url;
+
+                    // Step 2: Save to Firestore with original file info
+                    // Note: PDF to TXT conversion happens on-demand when user downloads
+                    const fileData = {
+                        name: originalFileName,
+                        title: title,
+                        department: department,
+                        size: fileSize,
+                        type: selectedFile.type || 'Unknown',
+                        description: description,
+                        category: category,
+                        cloudinaryUrl: cloudinaryUrl,
+                        originalFormat: originalExtension,
+                        originalSize: fileSize,
+                        uploadedDate: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    // Save to Firestore
+                    return db.collection('courses').add(fileData);
+                })
+                .then(docRef => {
+                    console.log('Course saved to Firestore:', docRef.id);
+                    alert(`Course "${title}" posted successfully!`);
+
+                    // Clear form
+                    document.getElementById('fileDepartment').value = '';
+                    document.getElementById('fileInput').value = '';
+                    document.getElementById('fileInfo').textContent = '';
+                    document.getElementById('fileTitle').value = '';
+                    document.getElementById('fileDescription').value = '';
+                    document.getElementById('fileCategory').value = '';
+                    selectedFile = null;
+
+                    // Reset button
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+
+                    // Switch to resources tab to show uploaded file
+                    switchResourceTab('resources');
+                    updateFilesList();
+                })
+                .catch(error => {
+                    console.error('Upload error:', error);
+                    alert('Error uploading file: ' + error.message);
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                });
         }
 
         // Upload file to Cloudinary
@@ -2783,20 +2837,20 @@
                     method: 'POST',
                     body: formData
                 })
-                .then(response => {
-                    if (!response.ok) throw new Error('Cloudinary upload failed');
-                    return response.json();
-                })
-                .then(data => {
-                    resolve(data.secure_url);
-                })
-                .catch(error => reject(error));
+                    .then(response => {
+                        if (!response.ok) throw new Error('Cloudinary upload failed');
+                        return response.json();
+                    })
+                    .then(data => {
+                        resolve(data.secure_url);
+                    })
+                    .catch(error => reject(error));
             });
         }
 
         function updateResourcesList() {
             const resourcesList = document.getElementById('resourcesList');
-            
+
             // Load from Firestore
             db.collection('courses').orderBy('uploadedDate', 'desc').get().then(snapshot => {
                 if (snapshot.empty) {
@@ -2834,7 +2888,7 @@
 
         function updateFilesList() {
             const filesList = document.getElementById('filesList');
-            
+
             // Load from Firestore
             db.collection('courses').orderBy('uploadedDate', 'desc').get().then(snapshot => {
                 if (snapshot.empty) {
@@ -2882,7 +2936,7 @@
 
         function sendNotification(e) {
             e.preventDefault();
-            
+
             const title = document.getElementById('notificationTitle').value;
             const message = document.getElementById('notificationMessage').value;
 
@@ -2898,7 +2952,7 @@
                 sentDate: firebase.firestore.FieldValue.serverTimestamp()
             }).then(docRef => {
                 console.log('Notification sent:', docRef.id);
-                
+
                 // Also get user count for alert
                 db.collection('students').get().then(snapshot => {
                     const userCount = snapshot.size;
@@ -2924,208 +2978,26 @@
             document.getElementById('feedbackMessage').value = '';
         }
 
-        // Download directly from Firebase Storage
-        function downloadWithWatermark(fileUrl, fileName) {
-            try {
-                if (!fileUrl) {
-                    alert('Download link not available');
-                    return;
-                }
-
-                // Generate filename with FLASH100 watermark
-                const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-                const baseName = fileName ? fileName.split('.')[0] : 'resource';
-                const extension = fileName ? fileName.split('.').pop() : 'pdf';
-                const downloadName = `FLASH100_${baseName}_${timestamp}.${extension}`;
-                
-                const isCloudinary = fileUrl.includes('cloudinary.com') || fileUrl.includes('res.cloudinary.com');
-                
-                if (isCloudinary) {
-                    // Download from Cloudinary as blob, then convert to TXT and download
-                    console.log('📥 Downloading from Cloudinary as blob...');
-                    alert('⏳ Downloading...');
-                    
-                    // Add fl_attachment transformation to Cloudinary URL
-                    let downloadUrl = fileUrl;
-                    if (fileUrl.includes('/upload/')) {
-                        downloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
-                    } else if (!fileUrl.includes('fl_attachment')) {
-                        const separator = fileUrl.includes('?') ? '&' : '?';
-                        downloadUrl = fileUrl + separator + 'fl_attachment';
-                    }
-                    
-                    console.log('Download URL:', downloadUrl);
-                    
-                    fetch(downloadUrl)
-                        .then(response => {
-                            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                            return response.blob();
-                        })
-                        .then(async blob => {
-                            console.log('✅ Blob received, size:', blob.size);
-                            
-                            // Get file type
-                            const extension = fileName ? fileName.split('.').pop().toLowerCase() : 'pdf';
-                            
-                            // If already TXT, download directly
-                            if (extension === 'txt') {
-                                const blobUrl = URL.createObjectURL(blob);
-                                const link = document.createElement('a');
-                                link.href = blobUrl;
-                                link.download = downloadName;
-                                document.body.appendChild(link);
-                                link.click();
-                                document.body.removeChild(link);
-                                setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
-                                
-                                console.log('✅ TXT download complete:', downloadName);
-                                alert('✅ Download started: ' + downloadName);
-                                return;
-                            }
-                            
-                            // Convert PDF to TXT
-                            if (extension === 'pdf') {
-                                console.log('Converting PDF to TXT...');
-                                alert('⏳ Converting PDF to TXT...');
-                                
-                                pdfjsLib.getDocument(blob).promise.then(async (pdf) => {
-                                    let textContent = '';
-                                    
-                                    // Extract text from all pages
-                                    for (let i = 1; i <= pdf.numPages; i++) {
-                                        const page = await pdf.getPage(i);
-                                        const text = await page.getTextContent();
-                                        text.items.forEach(item => {
-                                            textContent += item.str + ' ';
-                                        });
-                                        textContent += '\n\n';
-                                    }
-                                    
-                                    // Create TXT file
-                                    const txtName = downloadName.replace(/\.[^.]+$/, '.txt');
-                                    const txtBlob = new Blob([textContent], { type: 'text/plain' });
-                                    const blobUrl = URL.createObjectURL(txtBlob);
-                                    
-                                    // Download TXT
-                                    const link = document.createElement('a');
-                                    link.href = blobUrl;
-                                    link.download = txtName;
-                                    document.body.appendChild(link);
-                                    link.click();
-                                    document.body.removeChild(link);
-                                    setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
-                                    
-                                    console.log('✅ PDF to TXT conversion complete:', txtName);
-                                    alert('✅ Download started: ' + txtName);
-                                }).catch(error => {
-                                    console.error('PDF conversion error:', error);
-                                    alert('❌ PDF conversion failed: ' + error.message);
-                                });
-                                return;
-                            }
-                            
-                            // For other files, just download as-is
-                            const blobUrl = URL.createObjectURL(blob);
-                            const link = document.createElement('a');
-                            link.href = blobUrl;
-                            link.download = downloadName;
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                            setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
-                            
-                            console.log('✅ Download complete:', downloadName);
-                            alert('✅ Download started: ' + downloadName);
-                        })
-                        .catch(error => {
-                            console.error('Blob download error:', error);
-                            alert('❌ Download failed: ' + error.message);
-                        });
-                } else {
-                    // For Firebase Storage URLs
-                    console.log('📥 Starting download from Firebase Storage...');
-                    
-                    // Add alt=media parameter to Firebase Storage URL to force download
-                    const downloadUrl = fileUrl.includes('alt=media') ? fileUrl : fileUrl + '?alt=media';
-                    
-                    // Create and trigger download link
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.download = downloadName;
-                    link.target = '_blank';
-                    link.rel = 'noopener noreferrer';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    
-                    console.log('✅ Download started:', downloadName);
-                    alert('✅ Download started: ' + downloadName);
-                }
-                
-            } catch (error) {
-                console.error('Download error:', error);
-                alert('❌ Download failed: ' + error.message);
-            }
-        }
-
         // View file in modal
-        function downloadResource(fileUrl, fileName) {
-            console.log('⬇️ Downloading resource:', fileName);
-            
-            try {
-                // Create temporary link for download
-                const link = document.createElement('a');
-                
-                // Check if Cloudinary
-                const isCloudinary = fileUrl.includes('cloudinary.com') || fileUrl.includes('res.cloudinary.com');
-                
-                if (isCloudinary) {
-                    // Add fl_attachment for Cloudinary to force download
-                    let downloadUrl = fileUrl;
-                    if (fileUrl.includes('/upload/')) {
-                        downloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
-                    } else if (!fileUrl.includes('fl_attachment')) {
-                        const separator = fileUrl.includes('?') ? '&' : '?';
-                        downloadUrl = fileUrl + separator + 'fl_attachment';
-                    }
-                    link.href = downloadUrl;
-                } else {
-                    // Firebase Storage URL
-                    link.href = fileUrl + '?alt=media';
-                }
-                
-                link.download = fileName;
-                link.target = '_blank';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                console.log('✅ Download started:', fileName);
-            } catch (error) {
-                console.error('Download error:', error);
-                alert('❌ Download failed: ' + error.message);
-            }
-        }
-
         function viewFile(fileUrl, fileName) {
             const extension = fileName ? fileName.split('.').pop().toLowerCase() : '';
             console.log('👁️ Viewing file:', fileName, 'Type:', extension);
-            
+
             const modal = document.getElementById('fileViewerModal');
             const viewerContent = document.getElementById('fileViewerContent');
-            
+
             if (!modal) {
                 alert('❌ Viewer not available');
                 return;
             }
-            
+
             // Show loading
             viewerContent.innerHTML = '<p style="color: #fff; text-align: center; padding: 40px;">⏳ Loading file...</p>';
             modal.style.display = 'block';
-            
+
             // Check if Cloudinary
             const isCloudinary = fileUrl.includes('cloudinary.com') || fileUrl.includes('res.cloudinary.com');
-            
+
             if (isCloudinary) {
                 // Add fl_attachment for Cloudinary
                 let downloadUrl = fileUrl;
@@ -3135,7 +3007,7 @@
                     const separator = fileUrl.includes('?') ? '&' : '?';
                     downloadUrl = fileUrl + separator + 'fl_attachment';
                 }
-                
+
                 fetch(downloadUrl)
                     .then(response => {
                         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -3164,10 +3036,10 @@
                     });
             }
         }
-        
+
         function displayFileContent(blob, extension, fileName) {
             const viewerContent = document.getElementById('fileViewerContent');
-            
+
             if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
                 // Display image
                 const url = URL.createObjectURL(blob);
@@ -3179,7 +3051,7 @@
                     try {
                         const pdf = await pdfjsLib.getDocument(e.target.result).promise;
                         let htmlContent = '<div style="color: #fff; padding: 20px;">';
-                        
+
                         for (let i = 1; i <= pdf.numPages; i++) {
                             const page = await pdf.getPage(i);
                             const textContent = await page.getTextContent();
@@ -3215,7 +3087,7 @@
                 reader.readAsText(blob);
             }
         }
-        
+
         function closeFileViewer() {
             const modal = document.getElementById('fileViewerModal');
             if (modal) {
@@ -3223,11 +3095,67 @@
             }
         }
 
+        // Global variables for converter
+        let converterFileBlob = null;
+        let converterFileName = '';
+        let converterFileExtension = '';
+        let convertedBlob = null;
 
+        // Download file to device
+        function downloadFile(fileUrl, fileName) {
+            if (!fileUrl) {
+                alert('❌ No file URL provided');
+                return;
+            }
 
-        function submitFeedback(e) {
+            try {
+                // For Cloudinary URLs
+                if (fileUrl.includes('cloudinary.com') || fileUrl.includes('res.cloudinary.com')) {
+                    let downloadUrl = fileUrl;
+                    if (fileUrl.includes('/upload/')) {
+                        downloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
+                    } else if (!fileUrl.includes('fl_attachment')) {
+                        const separator = fileUrl.includes('?') ? '&' : '?';
+                        downloadUrl = fileUrl + separator + 'fl_attachment';
+                    }
+
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = fileName || 'download';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    // For Firebase Storage URLs
+                    fetch(fileUrl + '?alt=media')
+                        .then(response => {
+                            if (!response.ok) throw new Error('Download failed');
+                            return response.blob();
+                        })
+                        .then(blob => {
+                            const url = URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.download = fileName || 'download';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            URL.revokeObjectURL(url);
+                        })
+                        .catch(error => {
+                            console.error('Download error:', error);
+                            alert('❌ Download failed: ' + error.message);
+                        });
+                }
+            } catch (error) {
+                console.error('Error initiating download:', error);
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+function submitFeedback(e) {
             e.preventDefault();
-            
+
             const subject = document.getElementById('feedbackSubject').value;
             const message = document.getElementById('feedbackMessage').value;
 
@@ -3265,88 +3193,85 @@
         function loadStudentMessages() {
             const messagesList = document.getElementById('studentMessages');
             messagesList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">Loading messages...</p>';
-            
+
             // Get personal messages for this student
             db.collection('messages')
                 .where('recipientMatric', '==', currentStudentData.matric)
                 .get().then(snapshot => {
-                if (snapshot.empty) {
-                    messagesList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No personal messages yet</p>';
-                } else {
-                    const messages = [];
-                    snapshot.forEach(doc => {
-                        messages.push({ id: doc.id, data: doc.data() });
-                    });
-                    
-                    // Sort by newest first
-                    messages.sort((a, b) => {
-                        const dateA = a.data.sentDate ? a.data.sentDate.toDate() : new Date(0);
-                        const dateB = b.data.sentDate ? b.data.sentDate.toDate() : new Date(0);
-                        return dateB - dateA;
-                    });
+                    if (snapshot.empty) {
+                        messagesList.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); padding: 20px;">No personal messages yet</p>';
+                    } else {
+                        const messages = [];
+                        snapshot.forEach(doc => {
+                            messages.push({ id: doc.id, data: doc.data() });
+                        });
 
-                    messagesList.innerHTML = '';
-                    messages.forEach(doc => {
-                        const msg = doc.data;
-                        const sentDate = msg.sentDate ? new Date(msg.sentDate.toDate()).toLocaleString() : 'N/A';
-                        const msgCard = document.createElement('div');
-                        msgCard.style.cssText = 'background: rgba(255, 140, 0, 0.08); border: 1px solid rgba(255, 140, 0, 0.3); padding: 20px; border-left: 4px solid #ff8c00; border-radius: 4px;';
-                        msgCard.innerHTML = `
+                        // Sort by newest first
+                        messages.sort((a, b) => {
+                            const dateA = a.data.sentDate ? a.data.sentDate.toDate() : new Date(0);
+                            const dateB = b.data.sentDate ? b.data.sentDate.toDate() : new Date(0);
+                            return dateB - dateA;
+                        });
+
+                        messagesList.innerHTML = '';
+                        messages.forEach(doc => {
+                            const msg = doc.data;
+                            const sentDate = msg.sentDate ? new Date(msg.sentDate.toDate()).toLocaleString() : 'N/A';
+                            const msgCard = document.createElement('div');
+                            msgCard.style.cssText = 'background: rgba(255, 140, 0, 0.08); border: 1px solid rgba(255, 140, 0, 0.3); padding: 20px; border-left: 4px solid #ff8c00; border-radius: 4px;';
+                            msgCard.innerHTML = `
                             <h4 style="color: #ff8c00; margin-bottom: 10px; font-size: 1.1em;">📧 From Admin</h4>
                             <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 10px; line-height: 1.6;">${msg.message}</p>
                             <p style="font-size: 0.85em; color: rgba(255, 255, 255, 0.5);">Sent: ${sentDate}</p>
                         `;
-                        messagesList.appendChild(msgCard);
-                    });
-                }
-            }).catch(error => {
-                console.error('Error loading messages:', error);
-                messagesList.innerHTML = '<p style="color: #ff6666; padding: 20px;">Error loading messages</p>';
-            });
+                            messagesList.appendChild(msgCard);
+                        });
+                    }
+                }).catch(error => {
+                    console.error('Error loading messages:', error);
+                    messagesList.innerHTML = '<p style="color: #ff6666; padding: 20px;">Error loading messages</p>';
+                });
         }
 
         // Close modals when clicking outside
-         window.onclick = function(event) {
-             const uploadModal = document.getElementById('uploadModal');
-             const notificationModal = document.getElementById('notificationModal');
-             const feedbackModal = document.getElementById('feedbackModal');
-             const departmentModal = document.getElementById('departmentModal');
-             
-             if (event.target === uploadModal) {
-                 closeUploadModal();
-             }
-             if (event.target === notificationModal) {
-                 closeNotificationModal();
-             }
-             if (event.target === feedbackModal) {
-                 closeFeedbackModal();
-             }
-             if (event.target === departmentModal) {
-                 closeDepartmentModal();
-             }
-         }
-        </script>
+        window.onclick = function (event) {
+            const uploadModal = document.getElementById('uploadModal');
+            const notificationModal = document.getElementById('notificationModal');
+            const feedbackModal = document.getElementById('feedbackModal');
+            const departmentModal = document.getElementById('departmentModal');
 
-        <!-- Global Footer -->
-        <div class="footer-container">
-         <div class="footer-content">
-             <span class="footer-text">POWERED BY</span>
-             <div class="footer-logo-section">
-                 <img src="https://i.ibb.co/qY1HQt95/1000034835-removebg-preview.png" alt="Rewarder Logo"
-                     class="footer-logo">
-                 <span class="footer-brand">REWARDER</span>
-             </div>
-             <div class="footer-ismartdc-section">
-                 <span class="footer-text">COMRADE: OLOYEDE TOLUWANIMI</span>
-             </div>
-             <span class="footer-text">THE FASA-LASU ASSISTANT GENERAL SECRETARY</span>
-         </div>
-         <div class="footer-copyright">© 2026 FLASH100 - FASA LASU Academic Support Hub</div>
+            if (event.target === uploadModal) {
+                closeUploadModal();
+            }
+            if (event.target === notificationModal) {
+                closeNotificationModal();
+            }
+            if (event.target === feedbackModal) {
+                closeFeedbackModal();
+            }
+            if (event.target === departmentModal) {
+                closeDepartmentModal();
+            }
+        }
+    </script>
+
+    <!-- Global Footer -->
+    <div class="footer-container">
+        <div class="footer-content">
+            <span class="footer-text">POWERED BY</span>
+            <div class="footer-logo-section">
+                <img src="https://i.ibb.co/qY1HQt95/1000034835-removebg-preview.png" alt="Rewarder Logo"
+                    class="footer-logo">
+                <span class="footer-brand">REWARDER</span>
+            </div>
+            <div class="footer-ismartdc-section">
+                <span class="footer-text">COMRADE: OLOYEDE TOLUWANIMI</span>
+            </div>
+            <span class="footer-text">THE FASA-LASU ASSISTANT GENERAL SECRETARY</span>
         </div>
+        <div class="footer-copyright">© 2026 FLASH100 - FASA LASU Academic Support Hub</div>
+    </div>
 
-        </body>
-        </html>      <div class="footer-copyright">© 2026 FLASH100 - FASA LASU Academic Support Hub</div>
-        </div>
+</body>
 
-        </body>
-        </html>
+</html>
