@@ -149,6 +149,20 @@
             background: #e0e0e0;
         }
 
+        .btn-back {
+            background: #666;
+            color: white;
+            padding: 12px 25px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 0.9em;
+        }
+
+        .btn-back:hover {
+            background: #555;
+        }
+
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -206,6 +220,7 @@
     </style>
 </head>
 <body>
+    <button class="btn-back" onclick="window.location.href='index.html'">← Back</button>
     <div class="container">
         <h1>📄 Text to PDF Converter</h1>
         <p class="subtitle">Convert your text files or write content directly to PDF format</p>
