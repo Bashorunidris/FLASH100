@@ -1836,6 +1836,28 @@
         // Password changed from redacted placeholder to actual credentials
         const ADMIN_PASSWORD = '1234ABCD';
 
+        // ====== AUTO LOGIN WITH FIREBASE AUTHENTICATION ======
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                // User is authenticated, auto-login
+                console.log('User authenticated:', user.email);
+                
+                // Get student data from Firestore
+                db.collection('students').doc(user.uid).get().then(doc => {
+                    if (doc.exists) {
+                        const studentData = doc.data();
+                        console.log('Auto-logging in:', studentData.name);
+                        showStudentDashboard(studentData, studentData.matric);
+                    }
+                }).catch(error => {
+                    console.error('Auto-login error:', error);
+                });
+            } else {
+                // User is not authenticated, show login screen
+                console.log('No authenticated user');
+            }
+        });
+
         function switchTab(tab) {
             const tabs = document.querySelectorAll('.tab');
             const forms = document.querySelectorAll('.form-content');
