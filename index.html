@@ -3044,29 +3044,21 @@
                     });
             } else {
                 // Firebase Storage URL
-                let viewUrl = fileUrl;
-                
-                // Add alt=media parameter if not already present
-                if (!viewUrl.includes('alt=media')) {
-                    const separator = viewUrl.includes('?') ? '&' : '?';
-                    viewUrl = viewUrl + separator + 'alt=media';
-                }
-                
-                fetch(viewUrl, {
-                    mode: 'cors',
-                    credentials: 'omit'
-                })
-                    .then(response => {
-                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                        return response.blob();
-                    })
-                    .then(blob => {
+                try {
+                    // Extract file path from URL
+                    const fileRef = storage.refFromURL(fileUrl);
+                    
+                    fileRef.getBytes(50 * 1024 * 1024).then(bytes => {
+                        const blob = new Blob([bytes]);
                         displayFileContent(blob, extension, fileName);
-                    })
-                    .catch(error => {
-                        console.error('File load error:', error);
+                    }).catch(error => {
+                        console.error('Firebase storage error:', error);
                         viewerContent.innerHTML = '<p style="color: #ff6666; text-align: center; padding: 40px;">❌ Failed to load file: ' + error.message + '</p>';
                     });
+                } catch (error) {
+                    console.error('File load error:', error);
+                    viewerContent.innerHTML = '<p style="color: #ff6666; text-align: center; padding: 40px;">❌ Failed to load file: ' + error.message + '</p>';
+                }
             }
         }
 
@@ -3160,23 +3152,11 @@
                     document.body.removeChild(link);
                 } else {
                     // For Firebase Storage URLs
-                    let downloadUrl = fileUrl;
-                    
-                    // Add alt=media parameter if not already present
-                    if (!downloadUrl.includes('alt=media')) {
-                        const separator = downloadUrl.includes('?') ? '&' : '?';
-                        downloadUrl = downloadUrl + separator + 'alt=media';
-                    }
-                    
-                    fetch(downloadUrl, {
-                        mode: 'cors',
-                        credentials: 'omit'
-                    })
-                        .then(response => {
-                            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                            return response.blob();
-                        })
-                        .then(blob => {
+                    try {
+                        const fileRef = storage.refFromURL(fileUrl);
+                        
+                        fileRef.getBytes(50 * 1024 * 1024).then(bytes => {
+                            const blob = new Blob([bytes]);
                             const url = URL.createObjectURL(blob);
                             const link = document.createElement('a');
                             link.href = url;
@@ -3185,11 +3165,15 @@
                             link.click();
                             document.body.removeChild(link);
                             URL.revokeObjectURL(url);
-                        })
-                        .catch(error => {
-                            console.error('Download error:', error);
+                            alert('✅ Download started: ' + fileName);
+                        }).catch(error => {
+                            console.error('Firebase storage download error:', error);
                             alert('❌ Download failed: ' + error.message);
                         });
+                    } catch (error) {
+                        console.error('Download error:', error);
+                        alert('❌ Error: ' + error.message);
+                    }
                 }
             } catch (error) {
                 console.error('Error initiating download:', error);
