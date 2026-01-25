@@ -3044,7 +3044,18 @@
                     });
             } else {
                 // Firebase Storage URL
-                fetch(fileUrl + '?alt=media')
+                let viewUrl = fileUrl;
+                
+                // Add alt=media parameter if not already present
+                if (!viewUrl.includes('alt=media')) {
+                    const separator = viewUrl.includes('?') ? '&' : '?';
+                    viewUrl = viewUrl + separator + 'alt=media';
+                }
+                
+                fetch(viewUrl, {
+                    mode: 'cors',
+                    credentials: 'omit'
+                })
                     .then(response => {
                         if (!response.ok) throw new Error(`HTTP ${response.status}`);
                         return response.blob();
@@ -3149,9 +3160,20 @@
                     document.body.removeChild(link);
                 } else {
                     // For Firebase Storage URLs
-                    fetch(fileUrl + '?alt=media')
+                    let downloadUrl = fileUrl;
+                    
+                    // Add alt=media parameter if not already present
+                    if (!downloadUrl.includes('alt=media')) {
+                        const separator = downloadUrl.includes('?') ? '&' : '?';
+                        downloadUrl = downloadUrl + separator + 'alt=media';
+                    }
+                    
+                    fetch(downloadUrl, {
+                        mode: 'cors',
+                        credentials: 'omit'
+                    })
                         .then(response => {
-                            if (!response.ok) throw new Error('Download failed');
+                            if (!response.ok) throw new Error(`HTTP ${response.status}`);
                             return response.blob();
                         })
                         .then(blob => {
