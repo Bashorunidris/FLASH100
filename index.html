@@ -1644,6 +1644,9 @@
         </div>
     </div>
 
+    <!-- File Converter Modal -->
+
+
     <div class="modal" id="feedbackModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -2015,7 +2018,7 @@
                                 <strong>File:</strong> ${course.name} | <strong>Size:</strong> ${course.size}<br>
                                 <strong>Posted:</strong> ${uploadedDate}
                             </p>
-                            ${course.firebaseStorageUrl ? `<button onclick="viewFile('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none; margin-right: 10px;">👁️ View</button><button onclick="downloadWithWatermark('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download</button>` : course.cloudinaryUrl ? `<button onclick="viewFile('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none; margin-right: 10px;">👁️ View</button><button onclick="downloadWithWatermark('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download</button>` : ''}
+                            ${course.firebaseStorageUrl ? `<button onclick="viewFile('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none; margin-right: 10px;">👁️ View</button><button onclick="downloadResource('${course.firebaseStorageUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download</button>` : course.cloudinaryUrl ? `<button onclick="viewFile('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none; margin-right: 10px;">👁️ View</button><button onclick="downloadResource('${course.cloudinaryUrl}', '${course.name}')" style="display: inline-block; padding: 10px 20px; background: #ff8c00; color: #fff; border: none; cursor: pointer; border-radius: 4px; text-decoration: none;">⬇️ Download</button>` : ''}
                         `;
                         coursesList.appendChild(courseCard);
                     });
@@ -2253,11 +2256,11 @@
                             </p>
                             ${course.firebaseStorageUrl ? `<div style="display: flex; gap: 10px;">
                                <button onclick="viewFile('${course.firebaseStorageUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">👁️ View</button>
-                               <button onclick="downloadWithWatermark('${course.firebaseStorageUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download</button>
-                           </div>` : course.cloudinaryUrl ? `<div style="display: flex; gap: 10px;">
-                               <button onclick="viewFile('${course.cloudinaryUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">👁️ View</button>
-                               <button onclick="downloadWithWatermark('${course.cloudinaryUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download</button>
-                           </div>` : ''}
+                                <button onclick="downloadResource('${course.firebaseStorageUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download</button>
+                            </div>` : course.cloudinaryUrl ? `<div style="display: flex; gap: 10px;">
+                                <button onclick="viewFile('${course.cloudinaryUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: #6D28D9; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">👁️ View</button>
+                                <button onclick="downloadResource('${course.cloudinaryUrl.replace(/'/g, "\\'")}', '${course.name.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px 20px; background: ${color}; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: 600; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⬇️ Download</button>
+                            </div>` : ''}
                         `;
                         coursesGrid.appendChild(courseCard);
                     });
@@ -2699,38 +2702,47 @@
             btn.disabled = true;
 
             // Step 1: Upload to Cloudinary
-            const formData = new FormData();
-            formData.append('file', selectedFile);
-            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+             const formData = new FormData();
+             formData.append('file', selectedFile);
+             formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+             
+             const originalFileName = selectedFile.name;
+             const originalExtension = originalFileName.split('.').pop().toLowerCase();
+             const fileSize = (selectedFile.size / 1024 / 1024).toFixed(2) + ' MB';
 
-            fetch(CLOUDINARY_API_URL, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    throw new Error(data.error.message);
-                }
-                
-                console.log('File uploaded to Cloudinary:', data.secure_url);
-                
-                // Step 2: Save to Firestore with Cloudinary URL
-                const fileData = {
-                    name: selectedFile.name,
-                    title: title,
-                    department: department,
-                    size: (selectedFile.size / 1024 / 1024).toFixed(2) + ' MB',
-                    type: selectedFile.type || 'Unknown',
-                    description: description,
-                    category: category,
-                    cloudinaryUrl: data.url || data.secure_url,
-                    uploadedDate: firebase.firestore.FieldValue.serverTimestamp()
-                };
+             fetch(CLOUDINARY_API_URL, {
+                 method: 'POST',
+                 body: formData
+             })
+             .then(response => response.json())
+             .then(async (data) => {
+                 if (data.error) {
+                     throw new Error(data.error.message);
+                 }
+                 
+                 console.log('File uploaded to Cloudinary:', data.secure_url);
+                 
+                 const cloudinaryUrl = data.url || data.secure_url;
+                 
+                 // Step 2: Save to Firestore with original file info
+                 // Note: PDF to TXT conversion happens on-demand when user downloads
+                 const fileData = {
+                     name: originalFileName,
+                     title: title,
+                     department: department,
+                     size: fileSize,
+                     type: selectedFile.type || 'Unknown',
+                     description: description,
+                     category: category,
+                     cloudinaryUrl: cloudinaryUrl,
+                     originalFormat: originalExtension,
+                     originalSize: fileSize,
+                     uploadedDate: firebase.firestore.FieldValue.serverTimestamp()
+                 };
 
-                // Save to Firestore
-                return db.collection('courses').add(fileData);
-            })
+                 // Save to Firestore
+                 return db.collection('courses').add(fileData);
+             })
             .then(docRef => {
                 console.log('Course saved to Firestore:', docRef.id);
                 alert(`Course "${title}" posted successfully!`);
@@ -3057,6 +3069,44 @@
         }
 
         // View file in modal
+        function downloadResource(fileUrl, fileName) {
+            console.log('⬇️ Downloading resource:', fileName);
+            
+            try {
+                // Create temporary link for download
+                const link = document.createElement('a');
+                
+                // Check if Cloudinary
+                const isCloudinary = fileUrl.includes('cloudinary.com') || fileUrl.includes('res.cloudinary.com');
+                
+                if (isCloudinary) {
+                    // Add fl_attachment for Cloudinary to force download
+                    let downloadUrl = fileUrl;
+                    if (fileUrl.includes('/upload/')) {
+                        downloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
+                    } else if (!fileUrl.includes('fl_attachment')) {
+                        const separator = fileUrl.includes('?') ? '&' : '?';
+                        downloadUrl = fileUrl + separator + 'fl_attachment';
+                    }
+                    link.href = downloadUrl;
+                } else {
+                    // Firebase Storage URL
+                    link.href = fileUrl + '?alt=media';
+                }
+                
+                link.download = fileName;
+                link.target = '_blank';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                console.log('✅ Download started:', fileName);
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('❌ Download failed: ' + error.message);
+            }
+        }
+
         function viewFile(fileUrl, fileName) {
             const extension = fileName ? fileName.split('.').pop().toLowerCase() : '';
             console.log('👁️ Viewing file:', fileName, 'Type:', extension);
@@ -3172,6 +3222,8 @@
                 modal.style.display = 'none';
             }
         }
+
+
 
         function submitFeedback(e) {
             e.preventDefault();
@@ -3290,6 +3342,10 @@
              <span class="footer-text">THE FASA-LASU ASSISTANT GENERAL SECRETARY</span>
          </div>
          <div class="footer-copyright">© 2026 FLASH100 - FASA LASU Academic Support Hub</div>
+        </div>
+
+        </body>
+        </html>      <div class="footer-copyright">© 2026 FLASH100 - FASA LASU Academic Support Hub</div>
         </div>
 
         </body>
