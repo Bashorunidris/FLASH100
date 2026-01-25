@@ -3023,11 +3023,15 @@
             if (isCloudinary) {
                 // Add fl_attachment for Cloudinary
                 let downloadUrl = fileUrl;
-                if (fileUrl.includes('/upload/')) {
-                    downloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
-                } else if (!fileUrl.includes('fl_attachment')) {
-                    const separator = fileUrl.includes('?') ? '&' : '?';
-                    downloadUrl = fileUrl + separator + 'fl_attachment';
+                
+                // Convert HTTP to HTTPS for secure deployment
+                downloadUrl = downloadUrl.replace('http://', 'https://');
+                
+                if (downloadUrl.includes('/upload/')) {
+                    downloadUrl = downloadUrl.replace('/upload/', '/upload/fl_attachment/');
+                } else if (!downloadUrl.includes('fl_attachment')) {
+                    const separator = downloadUrl.includes('?') ? '&' : '?';
+                    downloadUrl = downloadUrl + separator + 'fl_attachment';
                 }
 
                 fetch(downloadUrl)
@@ -3137,11 +3141,15 @@
                 // For Cloudinary URLs
                 if (fileUrl.includes('cloudinary.com') || fileUrl.includes('res.cloudinary.com')) {
                     let downloadUrl = fileUrl;
-                    if (fileUrl.includes('/upload/')) {
-                        downloadUrl = fileUrl.replace('/upload/', '/upload/fl_attachment/');
-                    } else if (!fileUrl.includes('fl_attachment')) {
-                        const separator = fileUrl.includes('?') ? '&' : '?';
-                        downloadUrl = fileUrl + separator + 'fl_attachment';
+                    
+                    // Convert HTTP to HTTPS for secure deployment
+                    downloadUrl = downloadUrl.replace('http://', 'https://');
+                    
+                    if (downloadUrl.includes('/upload/')) {
+                        downloadUrl = downloadUrl.replace('/upload/', '/upload/fl_attachment/');
+                    } else if (!downloadUrl.includes('fl_attachment')) {
+                        const separator = downloadUrl.includes('?') ? '&' : '?';
+                        downloadUrl = downloadUrl + separator + 'fl_attachment';
                     }
 
                     const link = document.createElement('a');
