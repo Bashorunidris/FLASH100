@@ -3294,6 +3294,192 @@ body {
         border: 2px solid rgba(255, 255, 255, 0.3) !important;
     }
 }
+
+/* ==================== CONVERT TO PDF BUTTON CSS ==================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Convert to PDF Button */
+.convert-pdf-btn {
+    position: relative;
+    padding: clamp(14px, 3vw, 18px) clamp(28px, 6vw, 40px);
+    background: linear-gradient(135deg, #ff8c00 0%, #e67700 100%);
+    color: #fff;
+    border: none;
+    border-radius: clamp(10px, 2vw, 15px);
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: clamp(10px, 2vw, 15px);
+    box-shadow: 0 8px 25px rgba(255, 140, 0, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+/* Icon Styling */
+.convert-pdf-btn i {
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
+    transition: transform 0.3s ease;
+}
+
+/* Hover Effect */
+.convert-pdf-btn:hover {
+    background: linear-gradient(135deg, #ff9d1a 0%, #f07d00 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(255, 140, 0, 0.5);
+}
+
+.convert-pdf-btn:hover i {
+    transform: scale(1.2) rotate(5deg);
+}
+
+/* Active/Click Effect */
+.convert-pdf-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255, 140, 0, 0.4);
+}
+
+/* Shimmer Effect on Hover */
+.convert-pdf-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s;
+}
+
+.convert-pdf-btn:hover::before {
+    left: 100%;
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 8px 25px rgba(255, 140, 0, 0.4);
+    }
+    50% {
+        box-shadow: 0 8px 35px rgba(255, 140, 0, 0.6);
+    }
+}
+
+.convert-pdf-btn {
+    animation: pulse 2s infinite;
+}
+
+.convert-pdf-btn:hover {
+    animation: none;
+}
+
+/* ==================== RESPONSIVE BREAKPOINTS ==================== */
+
+/* Tablets */
+@media (max-width: 768px) {
+    .convert-pdf-btn {
+        padding: 14px 30px;
+        font-size: 1rem;
+    }
+    
+    .convert-pdf-btn i {
+        font-size: 1.3rem;
+    }
+}
+
+/* Mobile Phones */
+@media (max-width: 480px) {
+    .convert-pdf-btn {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+        gap: 8px;
+        border-radius: 10px;
+    }
+    
+    .convert-pdf-btn i {
+        font-size: 1.1rem;
+    }
+    
+    .convert-pdf-btn:hover {
+        transform: translateY(-2px);
+    }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 360px) {
+    .convert-pdf-btn {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Touch Devices */
+@media (hover: none) and (pointer: coarse) {
+    .convert-pdf-btn {
+        min-height: 48px;
+        padding: 12px 28px;
+    }
+    
+    .convert-pdf-btn:hover {
+        transform: none;
+    }
+    
+    .convert-pdf-btn:active {
+        transform: scale(0.97);
+        transition: transform 0.1s ease;
+    }
+}
+
+/* Landscape Mode */
+@media (max-height: 450px) and (orientation: landscape) {
+    .convert-pdf-btn {
+        padding: 10px 24px;
+        font-size: 0.95rem;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .convert-pdf-btn {
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .convert-pdf-btn,
+    .convert-pdf-btn i,
+    .convert-pdf-btn::before {
+        transition: none !important;
+        animation: none !important;
+    }
+    
+    .convert-pdf-btn:hover {
+        transform: none;
+    }
+}
     </style>
 
     <!-- Firebase Scripts -->
@@ -3430,7 +3616,10 @@ body {
             <p class="mb-4" style="color: rgba(255, 255, 255, 0.6); font-size: 1.1rem;">
                 <span id="studentMatric"></span> | <span id="studentDepartment"></span>
             </p>
-
+<button class="convert-pdf-btn" onclick="openPdfConverter()">
+        <i class="fas fa-file-pdf"></i>
+        <span>Convert Text to PDF</span>
+    </button>
             <!-- Navigation Tabs -->
             <div class="nav-tabs">
                 <button class="nav-tab active" onclick="switchNavTab('overview')">
@@ -5499,7 +5688,159 @@ function handleAIChatKeyPress(event) {
 // Initialize timer display
 updateTimerDisplay();
    
+// ==================== CONVERT TO PDF BUTTON JAVASCRIPT ====================
 
+/**
+ * Opens the PDF converter page
+ * This function is called when the "Convert Text to PDF" button is clicked
+ */
+function openPdfConverter() {
+    // Option 1: Open in same window
+    // window.location.href = 'pdf.html';
+    
+    // Option 2: Open in new tab (recommended)
+    window.open('pdf.html', '_blank');
+    
+    // Optional: Show loading feedback
+    showLoadingFeedback();
+}
+
+/**
+ * Shows a brief loading feedback when button is clicked
+ */
+function showLoadingFeedback() {
+    const button = document.querySelector('.convert-pdf-btn');
+    
+    if (!button) return;
+    
+    // Save original content
+    const originalContent = button.innerHTML;
+    
+    // Show loading state
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Opening...</span>';
+    button.style.pointerEvents = 'none';
+    
+    // Restore original state after 1 second
+    setTimeout(() => {
+        button.innerHTML = originalContent;
+        button.style.pointerEvents = 'auto';
+    }, 1000);
+}
+
+/**
+ * Alternative: Open PDF converter with parameters
+ * @param {string} mode - The mode to open (e.g., 'text', 'image', 'document')
+ */
+function openPdfConverterWithMode(mode = 'text') {
+    window.open(`pdf.html?mode=${mode}`, '_blank');
+}
+
+/**
+ * Alternative: Check if PDF page exists before opening
+ */
+async function openPdfConverterSafe() {
+    try {
+        // Check if pdf.html exists
+        const response = await fetch('pdf.html', { method: 'HEAD' });
+        
+        if (response.ok) {
+            window.open('pdf.html', '_blank');
+        } else {
+            alert('PDF converter page not found. Please ensure pdf.html exists.');
+        }
+    } catch (error) {
+        console.error('Error checking PDF page:', error);
+        // Try to open anyway
+        window.open('pdf.html', '_blank');
+    }
+}
+
+// ==================== EVENT LISTENERS ====================
+
+// Add keyboard shortcut (Ctrl/Cmd + P)
+document.addEventListener('keydown', function(event) {
+    // Ctrl+P (Windows/Linux) or Cmd+P (Mac)
+    if ((event.ctrlKey || event.metaKey) && event.key === 'p') {
+        event.preventDefault(); // Prevent browser print dialog
+        openPdfConverter();
+    }
+});
+
+// Optional: Add ripple effect on click
+document.addEventListener('DOMContentLoaded', function() {
+    const button = document.querySelector('.convert-pdf-btn');
+    
+    if (button) {
+        button.addEventListener('click', function(e) {
+            // Create ripple element
+            const ripple = document.createElement('span');
+            ripple.style.position = 'absolute';
+            ripple.style.borderRadius = '50%';
+            ripple.style.background = 'rgba(255, 255, 255, 0.5)';
+            ripple.style.width = '100px';
+            ripple.style.height = '100px';
+            ripple.style.marginLeft = '-50px';
+            ripple.style.marginTop = '-50px';
+            ripple.style.pointerEvents = 'none';
+            ripple.style.animation = 'ripple-effect 0.6s';
+            
+            // Position ripple at click location
+            const rect = this.getBoundingClientRect();
+            ripple.style.left = e.clientX - rect.left + 'px';
+            ripple.style.top = e.clientY - rect.top + 'px';
+            
+            // Add ripple to button
+            this.appendChild(ripple);
+            
+            // Remove ripple after animation
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    }
+});
+
+// Add ripple animation CSS dynamically
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes ripple-effect {
+        from {
+            transform: scale(0);
+            opacity: 1;
+        }
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+
+// ==================== UTILITY FUNCTIONS ====================
+
+/**
+ * Check if user is on mobile device
+ */
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+/**
+ * Open PDF converter with mobile optimizations
+ */
+function openPdfConverterMobile() {
+    if (isMobileDevice()) {
+        // On mobile, open in same window for better experience
+        window.location.href = 'pdf.html';
+    } else {
+        // On desktop, open in new tab
+        window.open('pdf.html', '_blank');
+    }
+}
+
+// ==================== CONSOLE INFO ====================
+console.log('%c📄 PDF Converter Button Loaded! ', 'background: #ff8c00; color: white; font-size: 16px; padding: 10px; border-radius: 5px;');
+console.log('%cPress Ctrl/Cmd + P to open PDF converter', 'color: #ff8c00; font-size: 12px;');
     </script>
 </body>
 </html>
