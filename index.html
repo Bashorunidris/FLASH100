@@ -465,7 +465,8 @@ body {
     max-width: 1400px;
     margin: 0 auto;
 }
-/* ==================== NAVIGATION TABS - ANDROID OPTIMIZED ==================== */
+
+   /* ==================== NAVIGATION TABS - ANDROID OPTIMIZED ==================== */
 .nav-tabs {
     display: flex;
     gap: clamp(8px, 2vw, 12px);
@@ -690,6 +691,15 @@ body {
         -webkit-tap-highlight-color: rgba(255, 140, 0, 0.1) !important;
     }
 }
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
 /* ==================== CARDS ==================== */
 .card {
     background: rgba(255, 255, 255, 0.05);
