@@ -1160,101 +1160,6 @@ body {
     padding: clamp(1.5rem, 5vw, 3rem);
 }
 
-/* ==================== RESOURCES ==================== */
-.resource-tab.active {
-    color: var(--primary) !important;
-    background: rgba(255, 140, 0, 0.05);
-    position: relative;
-}
-
-.resource-tab.active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--primary);
-}
-
-.resource-tab:hover {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.resource-item {
-    background: rgba(255, 140, 0, 0.05);
-    border: 1px solid rgba(255, 140, 0, 0.3);
-    padding: clamp(12px, 3vw, 20px);
-    border-left: 3px solid var(--primary);
-    border-radius: var(--radius-md);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    margin-bottom: var(--space-md);
-    transition: all 0.3s;
-}
-
-.resource-item:hover {
-    background: rgba(255, 140, 0, 0.1);
-    transform: translateX(3px);
-    box-shadow: var(--shadow-md);
-}
-
-.resource-item h4 {
-    font-size: clamp(0.95rem, 2.5vw, 1.3rem);
-    word-break: break-word;
-    margin-bottom: var(--space-sm);
-    color: var(--primary);
-    font-family: var(--font-display);
-}
-
-.resource-item p {
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: var(--space-sm);
-    line-height: 1.6;
-    font-size: clamp(0.85rem, 2vw, 1rem);
-}
-
-.resource-actions {
-    display: flex;
-    gap: var(--space-sm);
-    margin-top: var(--space-md);
-    flex-wrap: wrap;
-}
-
-.resource-btn {
-    padding: clamp(8px, 2vw, 10px) clamp(14px, 3vw, 20px);
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s;
-    font-family: var(--font-body);
-    display: inline-flex;
-    align-items: center;
-    gap: clamp(4px, 1vw, 8px);
-    font-size: clamp(0.8rem, 2vw, 0.95rem);
-    -webkit-tap-highlight-color: transparent;
-}
-
-.resource-btn:hover {
-    background: var(--primary-dark);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
-}
-
-.resource-btn:active {
-    transform: translateY(0);
-}
-
-.resource-btn.secondary {
-    background: var(--secondary);
-}
-
-.resource-btn.secondary:hover {
-    background: #5568d3;
-}
 
 .category-badge {
     display: inline-block;
@@ -1888,6 +1793,293 @@ body {
         min-height: 44px;
     }
 }
+
+
+
+/* ==================== RESOURCE TABS HOVER EFFECTS ==================== */
+
+.resource-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: clamp(30px, 5vw, 40px);
+    border-bottom: 3px solid rgba(255, 140, 0, 0.2);
+    position: relative;
+}
+
+.resource-tab {
+    flex: 1;
+    padding: clamp(15px, 3vw, 20px) clamp(25px, 5vw, 40px);
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    font-family: var(--font-body);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(8px, 2vw, 12px);
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+/* Hover Effect */
+.resource-tab:hover {
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 140, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+/* Active State */
+.resource-tab.active {
+    color: var(--primary) !important;
+    background: rgba(255, 140, 0, 0.08);
+}
+
+/* Bottom Border Indicator for Active Tab */
+.resource-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border-radius: 3px 3px 0 0;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: scaleX(0);
+        opacity: 0;
+    }
+    to {
+        transform: scaleX(1);
+        opacity: 1;
+    }
+}
+
+/* Hover Effect with Bottom Border Preview */
+.resource-tab:not(.active):hover::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 25%;
+    right: 25%;
+    height: 2px;
+    background: rgba(255, 140, 0, 0.4);
+    transition: all 0.3s ease;
+}
+
+/* Active State on Press (Touch Devices) */
+.resource-tab:active {
+    transform: scale(0.98);
+    background: rgba(255, 140, 0, 0.12);
+}
+
+/* Icon Styling */
+.resource-tab i {
+    font-size: clamp(1rem, 2.2vw, 1.3rem);
+    transition: transform 0.3s ease;
+}
+
+.resource-tab:hover i {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.resource-tab.active i {
+    color: var(--primary);
+    transform: scale(1.15);
+}
+
+/* Ripple Effect on Click */
+.resource-tab::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 140, 0, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.resource-tab:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* ==================== RESPONSIVE HOVER EFFECTS ==================== */
+
+/* Desktop - Enhanced Hover */
+@media (min-width: 1025px) {
+    .resource-tab:hover {
+        box-shadow: 0 -2px 10px rgba(255, 140, 0, 0.15);
+    }
+    
+    .resource-tab.active {
+        box-shadow: 0 -2px 15px rgba(255, 140, 0, 0.25);
+    }
+}
+
+/* Tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .resource-tab {
+        padding: 16px 30px;
+        font-size: 1.1rem;
+    }
+}
+
+/* Mobile Phones */
+@media (max-width: 768px) {
+    .resource-tabs {
+        margin-bottom: 25px;
+        border-bottom-width: 2px;
+    }
+    
+    .resource-tab {
+        padding: 14px 20px;
+        font-size: 0.95rem;
+        gap: 6px;
+    }
+    
+    .resource-tab i {
+        font-size: 1rem;
+    }
+    
+    /* Simpler hover on mobile */
+    .resource-tab:hover {
+        transform: none;
+        background: rgba(255, 140, 0, 0.08);
+    }
+    
+    .resource-tab:active {
+        background: rgba(255, 140, 0, 0.15);
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    .resource-tabs {
+        flex-direction: column;
+        gap: 0;
+        border-bottom: none;
+    }
+    
+    .resource-tab {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        border-bottom: 2px solid rgba(255, 140, 0, 0.2);
+    }
+    
+    .resource-tab:last-child {
+        border-bottom: 3px solid rgba(255, 140, 0, 0.2);
+    }
+    
+    .resource-tab.active::after {
+        bottom: -2px;
+        height: 2px;
+    }
+    
+    .resource-tab:not(.active):hover::after {
+        display: none;
+    }
+}
+
+/* Touch Devices - Optimize for Touch */
+@media (hover: none) and (pointer: coarse) {
+    .resource-tab {
+        min-height: 48px;
+        padding: 14px 20px;
+    }
+    
+    .resource-tab:hover {
+        transform: none;
+    }
+    
+    .resource-tab:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+}
+
+/* Landscape Mode */
+@media (max-height: 450px) and (orientation: landscape) {
+    .resource-tab {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .resource-tab {
+        border: 1px solid rgba(255, 140, 0, 0.3);
+        margin: 0 2px;
+    }
+    
+    .resource-tab.active {
+        border-color: var(--primary);
+        border-width: 2px;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .resource-tab,
+    .resource-tab i,
+    .resource-tab::after,
+    .resource-tab::before {
+        transition: none !important;
+        animation: none !important;
+    }
+    
+    .resource-tab:hover i {
+        transform: none;
+    }
+}
+
+/* ==================== RESOURCE CONTENT TABS ==================== */
+
+.resource-content-tab {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.resource-content-tab.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .resource-tab:hover {
+        background: rgba(255, 140, 0, 0.1);
+    }
+    
+    .resource-tab.active {
+        background: rgba(255, 140, 0, 0.12);
+    }
+}
+
+
 /* ==================== FULL-PAGE DEPARTMENT MODAL STYLES ==================== */
 /* ==================== FULL-PAGE DEPARTMENT MODAL STYLES ==================== */
 
@@ -2024,79 +2216,6 @@ body {
     background: var(--primary-dark);
 }
 
-/* Resource Type Tabs */
-.resource-tabs {
-    display: flex;
-    gap: clamp(8px, 2vw, 15px);
-    margin-bottom: clamp(20px, 4vw, 30px);
-    padding-bottom: clamp(10px, 2vw, 15px);
-    border-bottom: 2px solid rgba(255, 140, 0, 0.2);
-    overflow-x: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary) rgba(255, 255, 255, 0.1);
-    -webkit-overflow-scrolling: touch;
-}
-
-.resource-tabs::-webkit-scrollbar {
-    height: clamp(4px, 1vw, 6px);
-}
-
-.resource-tabs::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
-
-.resource-tabs::-webkit-scrollbar-thumb {
-    background: var(--primary);
-    border-radius: 10px;
-}
-
-.resource-tab {
-    padding: clamp(10px, 2.5vw, 14px) clamp(20px, 4vw, 30px);
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 140, 0, 0.2);
-    color: rgba(255, 255, 255, 0.7);
-    border-radius: clamp(8px, 2vw, 12px);
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-weight: 600;
-    font-size: clamp(0.85rem, 2vw, 1rem);
-    font-family: var(--font-body);
-    white-space: nowrap;
-    position: relative;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.resource-tab:hover {
-    background: rgba(255, 140, 0, 0.1);
-    border-color: var(--primary);
-    color: rgba(255, 255, 255, 0.9);
-    transform: translateY(-2px);
-}
-
-.resource-tab.active {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    border-color: var(--primary);
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
-}
-
-/* Resource Content Tabs */
-.resource-content-tab {
-    display: none;
-}
-
-.resource-content-tab.active {
-    display: block;
-    animation: fadeIn 0.3s ease;
-}
-
-/* Resource Lists */
-#pastQuestionsList,
-#otherResourcesList {
-    display: grid;
-    gap: clamp(15px, 3vw, 25px);
-}
 
 /* Individual Resource Items - Already styled in main CSS but ensuring full responsiveness */
 #departmentModal .resource-item {
@@ -2238,16 +2357,6 @@ body {
         padding: 15px;
     }
 
-    .resource-tabs {
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    .resource-tab {
-        font-size: 0.85rem;
-        padding: 10px 16px;
-    }
-
     #departmentModal .resource-actions {
         flex-direction: column;
     }
@@ -2285,16 +2394,6 @@ body {
         padding: 12px;
     }
 
-    .resource-tabs {
-        gap: 8px;
-        margin-bottom: 15px;
-        padding-bottom: 10px;
-    }
-
-    .resource-tab {
-        font-size: 0.8rem;
-        padding: 8px 12px;
-    }
 
     #departmentModal .resource-item {
         padding: 15px;
@@ -2372,9 +2471,6 @@ body {
         padding: 15px 20px;
     }
 
-    .resource-tabs {
-        margin-bottom: 15px;
-    }
 }
 
 /* iPhone Safe Area Support */
@@ -2438,9 +2534,7 @@ body {
 @media print {
     #departmentModal .modal-header,
     #departmentModal .close-btn,
-    .resource-tabs {
-        display: none !important;
-    }
+    
 
     #departmentModal {
         background: white;
@@ -2456,79 +2550,6 @@ body {
         page-break-inside: avoid;
     }
 }
-/* Resource Type Tabs */
-.resource-tabs {
-    display: flex;
-    gap: clamp(8px, 2vw, 15px);
-    margin-bottom: clamp(20px, 4vw, 30px);
-    padding-bottom: clamp(10px, 2vw, 15px);
-    border-bottom: 2px solid rgba(255, 140, 0, 0.2);
-    overflow-x: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary) rgba(255, 255, 255, 0.1);
-    -webkit-overflow-scrolling: touch;
-}
-
-.resource-tabs::-webkit-scrollbar {
-    height: clamp(4px, 1vw, 6px);
-}
-
-.resource-tabs::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
-
-.resource-tabs::-webkit-scrollbar-thumb {
-    background: var(--primary);
-    border-radius: 10px;
-}
-
-.resource-tab {
-    padding: clamp(10px, 2.5vw, 14px) clamp(20px, 4vw, 30px);
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 140, 0, 0.2);
-    color: rgba(255, 255, 255, 0.7);
-    border-radius: clamp(8px, 2vw, 12px);
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-weight: 600;
-    font-size: clamp(0.85rem, 2vw, 1rem);
-    font-family: var(--font-body);
-    white-space: nowrap;
-    position: relative;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.resource-tab:hover {
-    background: rgba(255, 140, 0, 0.1);
-    border-color: var(--primary);
-    color: rgba(255, 255, 255, 0.9);
-    transform: translateY(-2px);
-}
-
-.resource-tab.active {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    border-color: var(--primary);
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
-}
-
-/* Resource Content Tabs */
-.resource-content-tab {
-    display: none;
-}
-
-.resource-content-tab.active {
-    display: block;
-    animation: fadeIn 0.3s ease;
-}
-
-/* Resource Lists */
-#pastQuestionsList,
-#otherResourcesList {
-    display: grid;
-    gap: clamp(15px, 3vw, 25px);
-}
 
 /* Individual Resource Items - Already styled in main CSS but ensuring full responsiveness */
 #departmentModal .resource-item {
@@ -2670,15 +2691,6 @@ body {
         padding: 15px;
     }
 
-    .resource-tabs {
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    .resource-tab {
-        font-size: 0.85rem;
-        padding: 10px 16px;
-    }
 
     #departmentModal .resource-actions {
         flex-direction: column;
@@ -2717,16 +2729,7 @@ body {
         padding: 12px;
     }
 
-    .resource-tabs {
-        gap: 8px;
-        margin-bottom: 15px;
-        padding-bottom: 10px;
-    }
 
-    .resource-tab {
-        font-size: 0.8rem;
-        padding: 8px 12px;
-    }
 
     #departmentModal .resource-item {
         padding: 15px;
@@ -2804,9 +2807,7 @@ body {
         padding: 15px 20px;
     }
 
-    .resource-tabs {
-        margin-bottom: 15px;
-    }
+    
 }
 
 /* iPhone Safe Area Support */
@@ -2870,9 +2871,6 @@ body {
 @media print {
     #departmentModal .modal-header,
     #departmentModal .close-btn,
-    .resource-tabs {
-        display: none !important;
-    }
 
     #departmentModal {
         background: white;
@@ -3614,29 +3612,33 @@ body {
                         style="width: 100%; padding: 15px 20px; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 140, 0, 0.3); color: #fff; border-radius: var(--radius-md); font-size: 1rem; font-family: var(--font-body);">
                 </div>
 
-                <!-- Resource Tabs -->
-                <div class="resource-tabs"
-                    style="display: flex; gap: 0; margin-bottom: 40px; border-bottom: 3px solid rgba(255, 140, 0, 0.2);">
-                    <button class="resource-tab" onclick="switchResourceType('other')"
-                        style="flex: 1; padding: 20px 40px; background: none; border: none; color: rgba(255, 255, 255, 0.5); font-size: 1.2rem; font-weight: 600; cursor: pointer; position: relative; transition: all 0.3s; text-align: center; font-family: var(--font-body);">
-                        <i class="fas fa-book"></i> Notes
-                    </button>
-                    <button class="resource-tab active" onclick="switchResourceType('past-questions')"
-                        style="flex: 1; padding: 20px 40px; background: none; border: none; color: rgba(255, 255, 255, 0.5); font-size: 1.2rem; font-weight: 600; cursor: pointer; position: relative; transition: all 0.3s; text-align: center; font-family: var(--font-body);">
-                        <i class="fas fa-file-alt"></i> Past Questions
-                    </button>
-                   
-                </div>
+               <!-- Resource Tabs -->
+<div class="resource-tabs"
+    style="display: flex; gap: 0; margin-bottom: 40px; border-bottom: 3px solid rgba(255, 140, 0, 0.2);">
+    <!-- NOTES TAB - ACTIVE BY DEFAULT -->
+    <button class="resource-tab active" onclick="switchResourceType('other')"
+        style="flex: 1; padding: 20px 40px; background: none; border: none; color: var(--primary); font-size: 1.2rem; font-weight: 600; cursor: pointer; position: relative; transition: all 0.3s; text-align: center; font-family: var(--font-body);">
+        <i class="fas fa-book"></i> Notes
+    </button>
+    <!-- PAST QUESTIONS TAB - INACTIVE BY DEFAULT -->
+    <button class="resource-tab" onclick="switchResourceType('past-questions')"
+        style="flex: 1; padding: 20px 40px; background: none; border: none; color: rgba(255, 255, 255, 0.5); font-size: 1.2rem; font-weight: 600; cursor: pointer; position: relative; transition: all 0.3s; text-align: center; font-family: var(--font-body);">
+        <i class="fas fa-file-alt"></i> Past Questions
+    </button>
+</div>
 
-                <!-- Past Questions Tab -->
-                <div id="pastQuestionsTab" class="form-content active">
-                    <div id="pastQuestionsList" style="display: grid; gap: 20px;"></div>
-                </div>
+<!-- Resource Content Areas -->
+<!-- NOTES/OTHER RESOURCES - ACTIVE BY DEFAULT -->
+<div id="otherResourcesTab" class="resource-content-tab active">
+    <div id="otherResourcesList"></div>
+</div>
 
-                <!-- Other Resources Tab -->
-                <div id="otherResourcesTab" class="form-content">
-                    <div id="otherResourcesList" style="display: grid; gap: 20px;"></div>
-                </div>
+<!-- PAST QUESTIONS - HIDDEN BY DEFAULT -->
+<div id="pastQuestionsTab" class="resource-content-tab">
+    <div id="pastQuestionsList"></div>
+</div>
+
+               
             </div>
         </div>
     </div>
@@ -4241,6 +4243,7 @@ function filterByDepartment(department) {
     // Open full-page modal and load resources
     openDepartmentModal(department);
 }
+// ==================== UPDATED RESOURCE FUNCTIONS ====================
 
 function openDepartmentModal(department) {
     const modal = document.getElementById('departmentModal');
@@ -4251,28 +4254,19 @@ function openDepartmentModal(department) {
     
     currentDepartmentFilter = department;
 
-    // Load past questions by default
-    switchResourceType('past-questions');
-}
-
-function closeDepartmentModal() {
-    const modal = document.getElementById('departmentModal');
-    modal.classList.remove('active');
-    
-    // Re-enable body scroll
-    document.body.style.overflow = '';
-    
-    document.getElementById('deptSearchInput').value = '';
+    // Load OTHER resources by default (Notes tab is active)
+    switchResourceType('other');
 }
 
 function switchResourceType(type) {
-    // Update tab styling
+    // Update tab styling - remove active from all tabs
     document.querySelectorAll('.resource-tab').forEach(tab => {
         tab.classList.remove('active');
         tab.style.color = 'rgba(255, 255, 255, 0.5)';
         tab.style.background = 'none';
     });
 
+    // Add active to clicked tab
     event.target.classList.add('active');
     event.target.style.color = 'var(--primary)';
 
@@ -4287,6 +4281,15 @@ function switchResourceType(type) {
 
     // Load resources
     loadResourcesByType(type);
+}
+function closeDepartmentModal() {
+    const modal = document.getElementById('departmentModal');
+    modal.classList.remove('active');
+    
+    // Re-enable body scroll
+    document.body.style.overflow = '';
+    
+    document.getElementById('deptSearchInput').value = '';
 }
 
 function loadResourcesByType(type) {
